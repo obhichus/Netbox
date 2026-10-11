@@ -61,8 +61,9 @@ git clone https://github.com/obhichus/netbox.git && cd netbox
 Výsledek je v `dist/`. Totéž umí GitHub Actions: **Actions → Offline balicek RHEL9 → Run workflow**
 postaví balíček a přiloží ho k nové release. Obrazy jsou pro `amd64`.
 
-Firemní IP Fabric 7.5 místo dema 7.9: v [build/plugin_requirements.txt](build/plugin_requirements.txt)
-změnit extra `ipfabric_7_9` na `ipfabric_7_5` a balíček postavit znovu.
+Verzi IP Fabricu není potřeba řešit při stavbě: obraz obsahuje SDK pro všechny verze, které plugin
+podporuje, a přepíná se až na RHEL9 konfigurátorem (krok 4). Výchozí SDK v obrazu se dá změnit
+`IPF_VERSION=7.5 ./build/build-bundle.sh`.
 
 ### 3. Podman na RHEL9 bez internetu
 
@@ -105,6 +106,31 @@ sudo /opt/netbox-offline/migrate/import-on-rhel.sh netbox-export-*.tar.gz  # dat
 
 NetBox: `http://<server>:8000/`
 
+Nakonec napojení na IP Fabric SŽ:
+
+```bash
+sudo /opt/netbox-offline/deploy/configure-ipfabric.py
+```
+
+Konfigurátor se zeptá na URL IP Fabricu, interní CA certifikát, účet (nebo API token) a **verzi IP Fabricu**.
+Verzi se pokusí zjistit sám z `/api/version`, jinak nabídne 7.5 (verze SŽ). Na verzi záleží: SDK `ipfabric`
+v pluginu musí mít stejné major.minor jako server, jinak plugin se serverem nekomunikuje správně.
+
+| IP Fabric | 7.0 | 7.2 | 7.3 | 7.5 | 7.8 | 7.9 | 7.10 | 7.11 |
+|---|---|---|---|---|---|---|---|---|
+| SDK v obrazu | 7.0.3 | 7.2.2 | 7.3.1 | 7.5.2 | 7.8.2 | 7.9.1 | 7.10.0 | 7.11.2 |
+
+Jiné verze plugin `ipfabric_netbox` 6.1.0 nepodporuje a konfigurátor je odmítne. Co konfigurátor udělá:
+
+1. uloží nastavení do `env/ipfabric.conf` (bez hesel), přístupy do `env/netbox.env` a `commatrix/ipf.env`,
+2. když SDK v obrazu nesedí, postaví bez internetu odvozený obraz `localhost/netbox-ipfabric:4.6.10-ipf7.5`
+   z wheelů v `/opt/ipfabric-wheels` a přepne na něj quadlety `netbox` a `netbox-worker`,
+3. přidá CA certifikát IP Fabricu k systémovým do `env/ca-bundle.crt` (v kontejneru `/etc/netbox-ca/ca-bundle.crt`),
+4. restartuje NetBox a vytvoří nebo upraví zdroj v **IP Fabric → Sources** (režim `local`, když účet smí
+   číst snímky, jinak `remote`).
+
+Po upgradu balíčku `install.sh` konfigurátor spustí znovu s `--apply` a uložené nastavení použije.
+
 ### 5. Přenos dat ze stávajícího stroje (volitelné)
 
 Na starém Ubuntu stroji s `/opt/netbox-docker`:
@@ -144,9 +170,8 @@ Ekvivalenty příkazů z původní dokumentace (`docker compose …` v `/opt/net
 
 NetBox na RHEL9 nepotřebuje internet. Pro data ze sítě jsou dvě cesty:
 
-- **IP Fabric je dostupný v interní síti**: nastavit `IPF_URL`, `IPF_USER`, `IPF_PASS` v
-  `/opt/netbox-offline/env/netbox.env` (pro skripty v kontejneru) a v `/opt/commatrix/ipf.env`
-  (pro skripty na hostiteli), pak `systemctl restart netbox netbox-worker`.
+- **IP Fabric je dostupný v interní síti**: spustit `deploy/configure-ipfabric.py` (viz krok 4), který
+  nastaví verzi SDK, přístupy pro skripty i zdroj v pluginu.
 - **IP Fabric dostupný není**: na stroji, který na něj vidí, uložit snímek do JSON (`IPF_DUMP_DIR`),
   přenést a nahrát přes `IPF_LOAD_DIR`. Postup je v [commatrix/README.md](commatrix/README.md).
 

@@ -60,6 +60,12 @@ if [ ! -e "$DEST/commatrix/ipf.env" ]; then
   chmod 600 "$DEST/commatrix/ipf.env"
 fi
 
+# Certifikaty, ktere vidi NetBox v kontejneru (systemove; CA IP Fabricu prida configure-ipfabric.py).
+if [ ! -e "$DEST/env/ca-bundle.crt" ]; then
+  cp /etc/pki/tls/certs/ca-bundle.crt "$DEST/env/ca-bundle.crt"
+  chmod 644 "$DEST/env/ca-bundle.crt"
+fi
+
 say "hesla a env soubory"
 rnd() { local s; s=$(head -c 1024 /dev/urandom | LC_ALL=C tr -dc 'A-Za-z0-9'); printf '%s' "${s:0:$1}"; }
 render() { # $1 vzor, $2 cil
@@ -124,12 +130,19 @@ podman healthcheck run netbox >/dev/null 2>&1 || die "NetBox neni zdravy, viz: j
 say "skripty komunikacni matice"
 "$DEST/deploy/install-commatrix.sh"
 
+# Po upgradu znovu nastavit SDK podle verze IP Fabricu (pri prvni instalaci se preskoci).
+if [ -e "$DEST/env/ipfabric.conf" ]; then
+  say "napojeni na IP Fabric podle $DEST/env/ipfabric.conf"
+  "$DEST/deploy/configure-ipfabric.py" --apply
+fi
+
 cat <<EOF
 
 Hotovo. NetBox bezi na http://$(hostname -f 2>/dev/null || hostname):${NETBOX_PORT}/
 
 Dalsi kroky:
   - novy server:       $DEST/deploy/create-superuser.sh
+  - napojeni IP Fabric: $DEST/deploy/configure-ipfabric.py   (verze SZ IP Fabricu, URL, ucet)
   - presun dat ze stareho stroje: $DEST/migrate/import-on-rhel.sh <archiv>
   - stav:              systemctl status 'netbox*'   |   podman ps
 EOF

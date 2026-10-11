@@ -14,6 +14,7 @@ User=netbox
 Group=root
 Volume=/opt/netbox-offline/configuration/extra.py:/etc/netbox/config/extra.py:ro,z
 Volume=/opt/netbox-offline/configuration/plugins.py:/etc/netbox/config/plugins.py:ro,z
+Volume=/opt/netbox-offline/env/ca-bundle.crt:/etc/netbox-ca/ca-bundle.crt:ro,z
 Volume=netbox-media.volume:/opt/netbox/netbox/media
 Volume=netbox-reports.volume:/opt/netbox/netbox/reports
 Volume=netbox-scripts.volume:/opt/netbox/netbox/scripts

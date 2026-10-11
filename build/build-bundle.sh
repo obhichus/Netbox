@@ -8,6 +8,7 @@
 #
 # Za firemni proxy s TLS inspekci: BUILD_CA_CERT=/cesta/k/ca.crt ./build/build-bundle.sh
 # (certifikat se pouzije jen pri stavbe, do vysledneho obrazu se nedostane).
+# Vychozi SDK pro jinou verzi IP Fabricu: IPF_VERSION=7.5 ./build/build-bundle.sh
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -45,19 +46,20 @@ CONTAINERFILE=build/Containerfile
 if [ -n "${HTTPS_PROXY:-}" ]; then
   BUILD_ARGS+=(--network host --build-arg "HTTPS_PROXY=${HTTPS_PROXY}" --build-arg "HTTP_PROXY=${HTTP_PROXY:-}" --build-arg "NO_PROXY=${NO_PROXY:-}")
 fi
+BUILD_ARGS+=(--build-arg "IPF_VERSION=${IPF_VERSION}")
 if [ -n "${BUILD_CA_CERT:-}" ]; then
   cp "$BUILD_CA_CERT" build/.build-ca.crt
   CONTAINERFILE=build/.Containerfile.ca
-  sed 's#^RUN /usr/local/bin/uv pip install#COPY build/.build-ca.crt /tmp/build-ca.crt\nRUN SSL_CERT_FILE=/tmp/build-ca.crt /usr/local/bin/uv pip install#' \
-    build/Containerfile > "$CONTAINERFILE"
+  sed 's#^COPY build/plugin_requirements.txt#COPY build/.build-ca.crt /tmp/build-ca.crt\n&#' build/Containerfile > "$CONTAINERFILE"
   echo "RUN rm -f /tmp/build-ca.crt" >> "$CONTAINERFILE"
+  BUILD_ARGS+=(--build-arg SSL_CERT_FILE=/tmp/build-ca.crt --build-arg PIP_CERT=/tmp/build-ca.crt)
   trap 'rm -f build/.build-ca.crt build/.Containerfile.ca' EXIT
 fi
 "$CTR" build "${BUILD_ARGS[@]}" -f "$CONTAINERFILE" -t "$NETBOX_IMAGE" .
 
 echo "== kontrola, ze plugin v obrazu je"
 "$CTR" run --rm --entrypoint /opt/netbox/venv/bin/python "$NETBOX_IMAGE" \
-  -c "import ipfabric_netbox, netbox_branching; print('ipfabric_netbox OK')"
+  -c "import ipfabric, ipfabric_netbox, netbox_branching; print('ipfabric_netbox OK, SDK', ipfabric.__version__)"
 
 echo "== ukladam obrazy"
 save() { # $1 obraz, $2 soubor

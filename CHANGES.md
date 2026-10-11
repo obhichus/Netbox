@@ -14,6 +14,8 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
   `deploy/install.sh` (RHEL9, podman + systemd quadlety). Záloha, obnova, `nb-shell.sh`, `install-commatrix.sh`.
 - Migrace dat ze starého Ubuntu stroje: `migrate/export-from-docker.sh` a `migrate/import-on-rhel.sh`.
 - Batfish je součástí balíčku jako volitelná služba.
+- Konfigurátor napojení na IP Fabric `deploy/configure-ipfabric.py`: verze IP Fabricu SŽ (7.5), offline
+  přepnutí SDK, CA certifikát, přístupy pro skripty a zdroj v pluginu (problém č. 88).
 
 ### Problémy řešené při přípravě balíčku
 
@@ -66,6 +68,12 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 #### 87. Prezentace pro vedení (`netbox-sz-vedeni.pptx`) v repu chybí
 - **Příčina:** vznikla jen jako soubor v původní pracovní session, ne na disku stroje.
 - **Řešení:** z přepisu session obnoven generátor `gen.js` (pptxgenjs) včetně obou pozdějších úprav a prezentace znovu vygenerována do `docs/prezentace-vedeni/` (velikost souhlasí s originálem).
+- **Stav:** vyřešeno.
+
+#### 88. Verze SDK `ipfabric` musí sedět s verzí IP Fabricu SŽ
+- **Příznak:** obraz se stavěl s SDK pro 7.9 (demo), SŽ provozuje IP Fabric 7.5; na offline RHEL9 nejde SDK doinstalovat z internetu.
+- **Příčina:** plugin `ipfabric_netbox` komunikuje přes SDK `ipfabric`, které musí mít stejné major.minor jako server (extra `ipfabric_7_5` apod.).
+- **Řešení:** obraz nese wheely SDK pro všechny podporované verze (7.0–7.11) v `/opt/ipfabric-wheels`. `deploy/configure-ipfabric.py` zjistí verzi serveru (`/api/version`) nebo se zeptá, postaví bez sítě odvozený obraz `…-ipf7.5`, přepne quadlety, zapíše přístupy a vytvoří zdroj v NetBoxu. Ověřeno přepnutí na 7.3 i 7.5 bez sítě.
 - **Stav:** vyřešeno.
 
 ## 2026-09-04 až 2026-09-18: stavba pilotu na Ubuntu stroji

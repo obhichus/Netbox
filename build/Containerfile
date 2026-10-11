@@ -3,13 +3,33 @@
 ARG NETBOX_BASE_IMAGE=docker.io/netboxcommunity/netbox:v4.6.10-5.0.2
 FROM ${NETBOX_BASE_IMAGE}
 
+# Verze IP Fabricu, pro kterou se do obrazu nainstaluje SDK (musi sedet major.minor).
+# Jinou verzi lze nastavit az na RHEL9 bez internetu: deploy/configure-ipfabric.py.
+ARG IPF_VERSION=7.9
+# Verze SDK, ktere plugin ipfabric_netbox 6.1.0 podporuje; jejich wheely jdou do obrazu
+# (/opt/ipfabric-wheels), aby slo SDK prepnout offline.
+ARG IPF_SDK_VERSIONS="7.0 7.2 7.3 7.5 7.8 7.9 7.10 7.11"
+# Jen pro stavbu za proxy s TLS inspekci (build-bundle.sh, BUILD_CA_CERT); do obrazu se neulozi.
+ARG SSL_CERT_FILE
+ARG PIP_CERT
+
 # Granian v obrazu posloucha napevno na "::". Na RHEL s vypnutym IPv6 (ipv6.disable=1)
 # pak NetBox nenastartuje; GRANIAN_HOST=0.0.0.0 v env/netbox.env to resi.
 RUN sed -i 's/--host "::"/--host "${GRANIAN_HOST:-::}"/' /opt/netbox/launch-netbox.sh \
  && grep -q 'GRANIAN_HOST' /opt/netbox/launch-netbox.sh
 
 COPY build/plugin_requirements.txt /opt/netbox/plugin_requirements.txt
-RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt
+RUN m=${IPF_VERSION#7.} \
+ && /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt "ipfabric>=${IPF_VERSION}.0,<7.$((m + 1)).0"
+
+RUN /usr/local/bin/uv venv -q /tmp/dl \
+ && /usr/local/bin/uv pip install -q --python /tmp/dl/bin/python pip \
+ && for v in $IPF_SDK_VERSIONS; do \
+      m=${v#7.}; \
+      /tmp/dl/bin/python -m pip download -q --no-cache-dir -d /opt/ipfabric-wheels "ipfabric>=${v}.0,<7.$((m + 1)).0" || exit 1; \
+    done \
+ && rm -rf /tmp/dl \
+ && /opt/netbox/venv/bin/python -c "import ipfabric; print(ipfabric.__version__)" > /opt/ipfabric-wheels/INSTALLED
 
 # Konfigurace pluginu musi byt v obrazu uz pri collectstatic, jinak chybi CSS/JS pluginu.
 COPY configuration/plugins.py /etc/netbox/config/plugins.py
