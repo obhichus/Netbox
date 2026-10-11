@@ -215,11 +215,15 @@ def pockej_na_netbox():
 
 
 def nastav_zdroj(conf, sec):
+    """Zdroj v pluginu (IP Fabric -> Sources), test spojeni pres SDK pluginu a nacteni snimku."""
     auth = sec.get("IPF_TOKEN") or [sec.get("IPF_USER", ""), sec.get("IPF_PASS", "")]
     params = {"auth": auth, "timeout": 30, "verify": CA_IN_CONTAINER if conf.get("IPF_CA") else True}
     kod = """
-import json, os
+import json, os, ipfabric
+from django.utils.module_loading import import_string
+from core.models import Job
 from ipfabric_netbox.models import IPFabricSource
+from ipfabric_netbox.utilities.ipfutils import IPFabric
 d = json.loads(os.environ["IPF_SRC"])
 src = IPFabricSource.objects.filter(name=d["name"]).first() or IPFabricSource(name=d["name"])
 src.url = d["url"].rstrip("/")
@@ -228,11 +232,46 @@ src.parameters = d["parameters"]
 src.full_clean()
 src.save()
 print("zdroj IP Fabric v NetBoxu:", src.name, src.url, src.type)
+try:
+    ipf = IPFabric(parameters=dict(src.parameters, base_url=src.url)).ipf
+    print("SPOJENI OK: server", getattr(ipf, "os_version", "?"), "| SDK", ipfabric.__version__,
+          "| snimku", len([k for k in ipf.snapshots if not k.startswith("$")]))
+except Exception as e:
+    print("SPOJENI SELHALO:", type(e).__name__, str(e)[:300])
+else:
+    if src.type == "local":
+        src.status = "queued"
+        IPFabricSource.objects.filter(pk=src.pk).update(status="queued")
+        Job.enqueue(import_string("ipfabric_netbox.jobs.sync_ipfabricsource"),
+                    name=f"{src.name} Snapshot Sync", instance=src, user=None)
+        print("NACITANI SNIMKU zarazeno")
 """
     data = json.dumps({"name": conf["IPF_SOURCE_NAME"], "url": conf["IPF_URL"],
                        "type": conf["IPF_SOURCE_TYPE"], "parameters": params})
-    run(["podman", "exec", "-i", "-e", "IPF_SRC=" + data, "netbox",
-         "/opt/netbox/netbox/manage.py", "shell"], stdin=kod)
+    r = run(["podman", "exec", "-i", "-e", "IPF_SRC=" + data, "netbox",
+             "/opt/netbox/netbox/manage.py", "shell"], stdin=kod, capture=True)
+    vystup = "\n".join(l for l in r.stdout.splitlines() if not l.startswith(("🧬", "/opt/netbox", "  warn")))
+    print(vystup)
+    if "SPOJENI SELHALO" in vystup:
+        print("""
+POZOR: NetBox se na IP Fabric nepripojil, import dat z IP Fabricu nepobezi.
+Zkontrolujte URL, ucet/token, CA certifikat a pruchod firewallem z RHEL9 na IP Fabric (443),
+pak spustte konfigurator znovu (--apply staci, kdyz se nastaveni nemeni).""")
+        return False
+    if "NACITANI SNIMKU" in vystup:
+        info("cekam na nacteni snimku z IP Fabricu")
+        dotaz = ("from ipfabric_netbox.models import IPFabricSource as S; s=S.objects.get(name=%r); "
+                 "print('STAV', s.status, s.snapshots.count())" % conf["IPF_SOURCE_NAME"])
+        for _ in range(30):
+            time.sleep(10)
+            r = run(["podman", "exec", "netbox", "/opt/netbox/netbox/manage.py", "shell", "-c", dotaz],
+                    capture=True, check=False)
+            stav = [l for l in r.stdout.splitlines() if l.startswith("STAV")]
+            if stav and stav[-1].split()[1] in ("completed", "failed", "timeout"):
+                print("   " + stav[-1].replace("STAV", "zdroj:") + " snimku v NetBoxu")
+                return stav[-1].split()[1] == "completed"
+        print("   nacitani jeste bezi, stav viz IP Fabric -> Sources")
+    return True
 
 
 def main():
@@ -309,11 +348,14 @@ def main():
     info("restartuji NetBox (%s)" % image)
     run(["systemctl", "restart", "netbox.service", "netbox-worker.service"])
     pockej_na_netbox()
-    nastav_zdroj(conf, nacti_env(NETBOX_ENV))
+    spojeni = nastav_zdroj(conf, nacti_env(NETBOX_ENV))
 
+    if not spojeni:
+        sys.exit(2)
     print("""
 Hotovo. IP Fabric %(IPF_VERSION)s, SDK v obrazu %(sdk)s, zdroj "%(IPF_SOURCE_NAME)s" (%(IPF_SOURCE_TYPE)s).
-Dalsi kroky v NetBoxu: IP Fabric -> Syncs (sync se zdrojem a transform mapami), potom
+Import dat: v NetBoxu IP Fabric -> Syncs -> Add (zdroj, snimek, co importovat) a Run; plugin vytvori
+vetev (branching), ze ktere se po kontrole zmeny slouci. Potom
 /opt/netbox-offline/deploy/install-commatrix.sh a kontrola matice v Customization -> Scripts.""" %
           dict(conf, sdk=sdk_v_obrazu(image)))
 

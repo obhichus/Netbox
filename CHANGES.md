@@ -73,7 +73,7 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 #### 88. Verze SDK `ipfabric` musí sedět s verzí IP Fabricu SŽ
 - **Příznak:** obraz se stavěl s SDK pro 7.9 (demo), SŽ provozuje IP Fabric 7.5; na offline RHEL9 nejde SDK doinstalovat z internetu.
 - **Příčina:** plugin `ipfabric_netbox` komunikuje přes SDK `ipfabric`, které musí mít stejné major.minor jako server (extra `ipfabric_7_5` apod.).
-- **Řešení:** obraz nese wheely SDK pro všechny podporované verze (7.0–7.11) v `/opt/ipfabric-wheels`. `deploy/configure-ipfabric.py` zjistí verzi serveru (`/api/version`) nebo se zeptá, postaví bez sítě odvozený obraz `…-ipf7.5`, přepne quadlety, zapíše přístupy a vytvoří zdroj v NetBoxu. Ověřeno přepnutí na 7.3 i 7.5 bez sítě.
+- **Řešení:** obraz nese wheely SDK pro všechny podporované verze (7.0–7.11) v `/opt/ipfabric-wheels`. `deploy/configure-ipfabric.py` zjistí verzi serveru (`/api/version`) nebo se zeptá, postaví bez sítě odvozený obraz `…-ipf7.5`, přepne quadlety, zapíše přístupy a vytvoří zdroj v NetBoxu. Na konci ověří spojení přes SDK pluginu a načte snímky (zdroj v režimu `local`). Ověřeno přepnutí na 7.3 i 7.5 bez sítě a chybová větev testu spojení; úspěšné načtení snímků vyžaduje skutečný IP Fabric.
 - **Stav:** vyřešeno.
 
 ## 2026-09-04 až 2026-09-18: stavba pilotu na Ubuntu stroji

@@ -127,7 +127,12 @@ Jiné verze plugin `ipfabric_netbox` 6.1.0 nepodporuje a konfigurátor je odmít
    z wheelů v `/opt/ipfabric-wheels` a přepne na něj quadlety `netbox` a `netbox-worker`,
 3. přidá CA certifikát IP Fabricu k systémovým do `env/ca-bundle.crt` (v kontejneru `/etc/netbox-ca/ca-bundle.crt`),
 4. restartuje NetBox a vytvoří nebo upraví zdroj v **IP Fabric → Sources** (režim `local`, když účet smí
-   číst snímky, jinak `remote`).
+   číst snímky, jinak `remote`),
+5. ověří spojení z kontejneru NetBoxu přes SDK pluginu (verze serveru, počet snímků) a v režimu `local`
+   rovnou načte snímky do NetBoxu. Když spojení selže, vypíše proč a skončí kódem 2.
+
+Samotný import dat se pak spouští v NetBoxu: **IP Fabric → Syncs → Add** (zdroj, snímek, co importovat)
+a **Run**. Plugin zapisuje do větve (netbox-branching), změny se po kontrole sloučí do hlavních dat.
 
 Po upgradu balíčku `install.sh` konfigurátor spustí znovu s `--apply` a uložené nastavení použije.
 
