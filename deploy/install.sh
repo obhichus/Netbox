@@ -78,7 +78,7 @@ render() { # $1 vzor, $2 cil
   chmod 600 "$2"
   echo "vytvoreno $2"
 }
-envval() { sed -n "s/^$1=//p" "$DEST/env/netbox.env" 2>/dev/null | head -1; }
+envval() { [ -f "$DEST/env/netbox.env" ] || return 0; sed -n "s/^$1=//p" "$DEST/env/netbox.env" | head -1; }
 # Pri opakovanem behu se hesla berou z existujiciho netbox.env, aby vsechny soubory sedely.
 DB_PASSWORD=$(envval DB_PASSWORD);                 DB_PASSWORD=${DB_PASSWORD:-$(rnd 32)}
 REDIS_PASSWORD=$(envval REDIS_PASSWORD);           REDIS_PASSWORD=${REDIS_PASSWORD:-$(rnd 32)}

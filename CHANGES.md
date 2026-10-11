@@ -79,6 +79,12 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - **Řešení:** obraz nese wheely SDK pro všechny podporované verze (7.0–7.11) v `/opt/ipfabric-wheels`. `deploy/configure-ipfabric.py` zjistí verzi serveru (`/api/version`) nebo se zeptá, postaví bez sítě odvozený obraz `…-ipf7.5`, přepne quadlety, zapíše přístupy a vytvoří zdroj v NetBoxu. Na konci ověří spojení přes SDK pluginu a načte snímky (zdroj v režimu `local`). Ověřeno přepnutí na 7.3 i 7.5 bez sítě a chybová větev testu spojení; úspěšné načtení snímků vyžaduje skutečný IP Fabric.
 - **Stav:** vyřešeno.
 
+#### 89. `install.sh` na čistém serveru skončil hned po „hesla a env soubory“ (kód 2)
+- **Příznak:** test na Rocky Linux 9 (GitHub Actions): po kopírování souborů skript bez hlášky skončil s kódem 2.
+- **Příčina:** `envval` četl hesla z `netbox.env`, který při první instalaci ještě neexistuje; `sed` vrátil 2 a díky `set -o pipefail` to ukončilo skript. V testech v dockeru se to neprojevilo, protože `install.sh` tam neběžel.
+- **Řešení:** `envval` při chybějícím souboru vrací prázdnou hodnotu.
+- **Stav:** vyřešeno.
+
 ## 2026-09-04 až 2026-09-18: stavba pilotu na Ubuntu stroji
 
 ### 2026-09-04: údržba Ubuntu hostitele a starý NetBox

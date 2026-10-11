@@ -16,7 +16,7 @@ dump() {
   docker exec "$C" bash -c 'systemctl --no-pager --plain list-units "netbox*"; podman ps -a;
     for u in netbox netbox-worker netbox-postgres netbox-redis; do echo "--- $u"; journalctl -u $u --no-pager -n 80; done' || true
 }
-trap dump ERR
+trap 'rc=$?; [ $rc -eq 0 ] || dump; exit $rc' EXIT
 
 docker rm -f "$C" >/dev/null 2>&1 || true
 docker volume rm -f rhel9-containers >/dev/null 2>&1 || true
