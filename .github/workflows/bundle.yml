@@ -1,0 +1,36 @@
+# Postavi offline balicek pro RHEL9 a prilozi ho k GitHub Release.
+# Spusteni: Actions -> "Offline balicek RHEL9" -> Run workflow, nebo push tagu v*.
+name: Offline balicek RHEL9
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag release (napr. rhel9-2026.10.11)"
+        required: true
+  push:
+    tags: ["v*", "rhel9-*"]
+
+permissions:
+  contents: write
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stavba balicku
+        run: CTR=docker ./build/build-bundle.sh
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          cd dist
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Offline balicek RHEL9 $TAG" \
+              --notes "Instalace: README.md, kapitola Postup (stahnout casti, slozit, overit, sudo ./deploy/install.sh)."
+          gh release upload "$TAG" netbox-offline-*.tar.gz.part-* netbox-offline-*.sha256 --clobber

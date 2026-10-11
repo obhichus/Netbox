@@ -7,6 +7,7 @@ Repo obsahuje vše potřebné k provozu na **RHEL9 bez přístupu k internetu** 
 | Kde | Co |
 |---|---|
 | [docs/PROJEKT.md](docs/PROJEKT.md) | o čem projekt je, proč a co má přinést |
+| [docs/prezentace-vedeni/](docs/prezentace-vedeni/) | prezentace pro vedení SŽ (`netbox-sz-vedeni.pptx`, 18 slajdů) |
 | [docs/prezentace/](docs/prezentace/) | prezentace „Komunikační matice v NetBoxu“ (otevřít `prezentace.html`) |
 | [docs/provoz-netboxu-s-ipfabric.html](docs/provoz-netboxu-s-ipfabric.html) | provozní dokumentace (IP Fabric → NetBox, snímky, matice) |
 | [docs/komunikacni-matice-runbook.html](docs/komunikacni-matice-runbook.html) | runbook ukázky pro kolegy, nálezy, otázky a odpovědi |
@@ -32,27 +33,36 @@ Verze jsou na jednom místě v [versions.env](versions.env). Odpovídají původ
 
 ## Postup
 
-### 1. Na stroji s internetem: postavit balíček
+### 1. Stáhnout hotový balíček z GitHubu
 
-Potřeba je Linux s podmanem nebo dockerem (klidně stávající Ubuntu stroj) a ~4 GB místa.
+Hotový balíček je v [Releases](https://github.com/obhichus/netbox/releases): soubory
+`netbox-offline-<datum>.tar.gz.part-00`, `part-01` … a `netbox-offline-<datum>.sha256`
+(GitHub bere soubory do 2 GB, proto je archiv rozdělený). Stáhnout všechny na libovolný stroj
+a přenést na RHEL9 (USB, interní sdílení).
+
+Na RHEL9 složit a ověřit:
+
+```bash
+cat netbox-offline-<datum>.tar.gz.part-* > netbox-offline-<datum>.tar.gz
+sha256sum -c netbox-offline-<datum>.sha256
+tar xzf netbox-offline-<datum>.tar.gz && cd netbox-offline-<datum>
+```
+
+### 2. Nebo si balíček postavit sám
+
+Na stroji s internetem a podmanem nebo dockerem (~8 GB místa):
 
 ```bash
 git clone https://github.com/obhichus/netbox.git && cd netbox
 ./build/build-bundle.sh                 # nebo: CTR=docker ./build/build-bundle.sh
+# za firemní proxy s TLS inspekcí: BUILD_CA_CERT=/cesta/ca.crt ./build/build-bundle.sh
 ```
 
-Výsledek je `dist/netbox-offline-<datum>.tar.gz` (obrazy jako `docker-archive`, konfigurace, skripty,
-kontrolní součty) a vedle něj `.sha256`. Obrazy se stahují pro `amd64`.
+Výsledek je v `dist/`. Totéž umí GitHub Actions: **Actions → Offline balicek RHEL9 → Run workflow**
+postaví balíček a přiloží ho k nové release. Obrazy jsou pro `amd64`.
 
 Firemní IP Fabric 7.5 místo dema 7.9: v [build/plugin_requirements.txt](build/plugin_requirements.txt)
 změnit extra `ipfabric_7_9` na `ipfabric_7_5` a balíček postavit znovu.
-
-### 2. Přenést na RHEL9 a ověřit
-
-```bash
-sha256sum -c netbox-offline-<datum>.tar.gz.sha256
-tar xzf netbox-offline-<datum>.tar.gz && cd netbox-offline-<datum>
-```
 
 ### 3. Podman na RHEL9 bez internetu
 
@@ -168,7 +178,7 @@ na které se dá narazit znovu:
 | 81 | proměnné v quadletech prázdné | žádné `$PROMENNE` v `Exec`/`HealthCmd`, hesla v souborech |
 
 Otevřené: varování při startu (č. 12), IPv6 link-local (43), NEDOSTUPNÉ z VLAN 333 v demo síti (48),
-výchozí API pepper po migraci (85), chybějící pptx pro vedení (87).
+výchozí API pepper po migraci (85).
 
 ## Známé věci
 

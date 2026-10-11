@@ -4,3 +4,5 @@ dist/
 env/*.env
 env/*.conf
 !env/*.example
+build/.build-ca.crt
+build/.Containerfile.ca

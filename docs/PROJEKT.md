@@ -161,8 +161,8 @@ V repu jako [prezentace/prezentace.html](prezentace/prezentace.html) (s poznámk
 bilance běhu (OK 18, porušení 9, chybí pravidlo 4, nedostupné 5), tři typy „neprojde“, hlavní nálezy,
 noční běh jako doklad pro NIS2, časté otázky a další kroky (firemní IP Fabric 7.5, reálná matice, noční běh, Batfish).
 
-**Chybí:** `netbox-sz-vedeni.pptx` (prezentace pro vedení, 7.3) vznikla jen jako soubor v původní session a
-v repu není. Její obsah je popsaný výše po slajdech. Pokud ji máš staženou, patří do `docs/`.
+Prezentace pro vedení (7.3) je v [prezentace-vedeni/netbox-sz-vedeni.pptx](prezentace-vedeni/netbox-sz-vedeni.pptx),
+znovu vygenerovaná z původního skriptu.
 
 ### 7.5 Podklady ke screenshotům pro šéfa (2026-09-16/17)
 

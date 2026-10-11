@@ -65,8 +65,8 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
 #### 87. Prezentace pro vedení (`netbox-sz-vedeni.pptx`) v repu chybí
 - **Příčina:** vznikla jen jako soubor v původní pracovní session, ne na disku stroje.
-- **Řešení:** obsah je popsaný po slajdech v `docs/PROJEKT.md` (7.3). Soubor doplnit, pokud je stažený.
-- **Stav:** otevřené.
+- **Řešení:** z přepisu session obnoven generátor `gen.js` (pptxgenjs) včetně obou pozdějších úprav a prezentace znovu vygenerována do `docs/prezentace-vedeni/` (velikost souhlasí s originálem).
+- **Stav:** vyřešeno.
 
 ## 2026-09-04 až 2026-09-18: stavba pilotu na Ubuntu stroji
 
