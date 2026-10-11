@@ -16,5 +16,7 @@ jobs:
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache && df -h /
       - name: Postavit offline balicek
         run: CTR=docker ./build/build-bundle.sh
+      - name: Postavit RPM
+        run: sudo apt-get install -y -q rpm && ./build/build-rpm.sh "$(ls dist/netbox-offline-*.tar.gz)"
       - name: Instalace na Rocky Linux 9 a kontroly
-        run: ./test/rhel9-e2e.sh "$(ls dist/*.sha256 | sed 's/\.sha256$//')"
+        run: ./test/rhel9-e2e.sh "$(ls dist/netbox-offline-*[0-9].sha256 | sed 's/\.sha256$//')"

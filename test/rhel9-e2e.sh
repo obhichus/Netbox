@@ -1,6 +1,7 @@
 #!/bin/bash
 # Test instalacniho balicku na RHEL9-kompatibilnim systemu (Rocky Linux 9 se systemd) v kontejneru.
 # Pouziti (stroj s dockerem a internetem): ./test/rhel9-e2e.sh dist/netbox-offline-YYYYMMDD
+#   Kdyz je v dist/ i RPM (build/build-rpm.sh), instaluje se z RPM jako v release.
 #   1. spusti Rocky 9 se systemd, nainstaluje container-tools (jako z DVD RHEL9)
 #   2. ODPOJI sit a pak postupuje presne podle README: cat casti, sha256sum -c, tar, install.sh
 #   3. overi NetBox, pluginy, skripty matice, superuzivatele, zalohu a konfigurator IP Fabricu
@@ -40,7 +41,13 @@ say "postup z README"
 x "mkdir -p /root/instalace && cd /root/instalace && cp /media/balik/$NAME.tar.gz.part-* /media/balik/$NAME.sha256 . \
    && cat $NAME.tar.gz.part-* > $NAME.tar.gz \
    && sha256sum -c $NAME.sha256 && tar xzf $NAME.tar.gz"
-x "cd /root/instalace/$NAME && ./deploy/install.sh"
+RPM=$(cd "$DIST" && ls netbox-offline-*.rpm 2>/dev/null | head -1 || true)
+if [ -n "$RPM" ]; then
+  say "instalace z RPM: dnf install ./$RPM && netbox-offline-install"
+  x "dnf install -y --disablerepo='*' /media/balik/$RPM && netbox-offline-install"
+else
+  x "cd /root/instalace/$NAME && ./deploy/install.sh"
+fi
 
 say "kontroly"
 x 'systemctl --no-pager --plain list-units "netbox*" batfish.service'

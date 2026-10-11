@@ -4,6 +4,14 @@ Historie změn a všech problémů, které se při stavbě a provozu řešily. N
 Každý problém má **Příznak / Příčina / Řešení / Stav** (vyřešeno · obejito · otevřené).
 Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
+## 2026-10-11 (večer): RPM a release v1.0
+
+- `build/build-rpm.sh`: RPM `netbox-offline-<verze>-<datum>.el9.x86_64.rpm` (zstd, asi 1 GB). Rozbalí balíček do
+  `/opt/netbox-offline-balik` a přidá příkazy `netbox-offline-install` a `netbox-ipfabric-config`; vyžaduje `podman >= 4.4`.
+- Workflow „Offline balicek RHEL9“ přikládá k release RPM, archiv po částech, prezentaci pro vedení a kuchařku.
+- Test na Rocky Linux 9 instaluje z RPM (`dnf install` bez sítě).
+- Kuchařka: instalace z RPM jako hlavní cesta.
+
 ## 2026-10-11: repozitář a offline balíček pro RHEL9
 
 ### Změny

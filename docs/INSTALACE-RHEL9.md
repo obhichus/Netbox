@@ -91,9 +91,29 @@ Po instalaci lze DVD odpojit (`umount /mnt/rhel9dvd`) a `.repo` soubor smazat.
 
 ---
 
-## 2. Stažení balíčku **[uživatel]**, na počítači s přístupem na GitHub
+## 2. Stažení a instalace z RPM (nejjednodušší cesta)
 
-Na stránce repozitáře **Releases** stáhněte u poslední verze všechny soubory:
+Na počítači s přístupem na GitHub **[uživatel]**: stránka repozitáře → **Releases** → poslední verze
+(např. `v1.0`) → v části *Assets* stáhnout:
+
+- `netbox-offline-4.6.10-<datum>.el9.x86_64.rpm` (asi 1 GB)
+- `netbox-offline-4.6.10-<datum>.el9.x86_64.rpm.sha256`
+
+Přenést na server (USB disk, `scp`, sdílený disk) a tam **[root]**:
+
+```bash
+cd /tmp
+sha256sum -c netbox-offline-*.rpm.sha256       # musí být OK
+dnf install ./netbox-offline-*.rpm             # potřebuje podman z kroku 1 (dnf ho najde na DVD)
+netbox-offline-install                         # = krok 4 níže: nahraje obrazy a spustí služby
+```
+
+RPM jen rozbalí balíček do `/opt/netbox-offline-balik` a přidá příkazy `netbox-offline-install`
+a `netbox-ipfabric-config`. Pokračujte krokem 5. Kroky 2b a 3 jsou jen pro variantu bez RPM.
+
+### 2b. Varianta bez RPM: archiv po částech **[uživatel]**
+
+Na stránce repozitáře **Releases** stáhněte u poslední verze soubory:
 
 - `netbox-offline-<datum>.tar.gz.part-00` (případně i `part-01`, …)
 - `netbox-offline-<datum>.sha256`
@@ -197,7 +217,8 @@ Pak v prohlížeči **[uživatel]**: `http://<server>:8000/`
 ## 6. Napojení na IP Fabric SŽ **[root]**
 
 ```bash
-/opt/netbox-offline/deploy/configure-ipfabric.py
+netbox-ipfabric-config                              # při instalaci z RPM
+/opt/netbox-offline/deploy/configure-ipfabric.py    # totéž bez RPM
 ```
 
 Konfigurátor se zeptá na:
@@ -301,4 +322,5 @@ rm -f /etc/containers/systemd/netbox* /etc/containers/systemd/batfish*
 systemctl daemon-reload
 # data (nevratně!):  podman volume rm netbox-postgres-data netbox-redis-data netbox-media netbox-reports netbox-scripts batfish-data
 # soubory:           rm -rf /opt/netbox-offline /opt/commatrix
+dnf remove netbox-offline        # jen při instalaci z RPM (smaže /opt/netbox-offline-balik)
 ```
