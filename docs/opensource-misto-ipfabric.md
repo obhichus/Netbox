@@ -12,7 +12,7 @@ Značení:
 1. **[U]** SŽ platí za IP Fabric zhruba 100 USD za zařízení a rok, při ~10 000 zařízeních tedy **~1 mil. USD ročně** (orientačně 22–24 mil. Kč, podle kurzu).
 2. Open-source stack **SuzieQ + Batfish + Netdisco + NetBox** pokryje většinu funkcí: sběr stavu sítě, historii, kontrolu záměru (intent), analýzu cest přes firewally a inventář. Všechny nástroje jsou v roce 2026 aktivně vydávané **[Z]**.
 3. **Slabé místo je grafika.** Nic open-source nenabízí hotovou interaktivní mapu sítě s vyznačenou cestou paketu jako IP Fabric. Dá se to poskládat (NetBox Topology Views, Netdisco, SuzieQ GUI), ale vypadá to hůř a část je potřeba dopsat.
-4. **[O]** Licence se nahrazuje lidmi: realisticky 3–5 lidí na stavbu a provoz, tj. **~6–12 mil. Kč ročně** plus jednorázově HW. Úspora je reálná, ale nižší, než říká samotná cena licence, a nese provozní riziko.
+4. **[O]** Licence se nahrazuje lidmi: realisticky 3–5 lidí v prvním roce a 2–3 lidé na další provoz, tj. **~4–12 mil. Kč ročně** plus jednorázově HW. Úspora je reálná, ale nižší, než říká samotná cena licence, a nese provozní riziko.
 5. **Doporučení:** nevypínat IP Fabric naslepo. Udělat **pilot na 3–6 měsíců** na jedné oblasti, změřit pokrytí proti IP Fabricu a s čísly v ruce jít buď do náhrady, nebo do **hybridu** (IP Fabric jen na páteř a firewally, zbytek open-source) a do vyjednávání ceny.
 
 ## 1. Co IP Fabric vlastně dělá
@@ -88,7 +88,13 @@ Odhad HW: **6–10 VM**, cca 100–150 vCPU, 0,5–1 TB RAM celkem, 2–5 TB dis
 | Lidé – provoz (rok 2+) | ~0,5–1 FTE | 2–3 FTE | 1,5–2 FTE |
 | HW | malý (appliance/VM) | 1–3 mil. Kč | 1–2 mil. Kč |
 | Podpora | v ceně | volitelně NetBox Labs Enterprise | IP Fabric v ceně |
-| **Celkem 3 roky [O]** | **~75 mil. Kč** | **~20–35 mil. Kč** | **~30–40 mil. Kč** |
+| **Celkem 3 roky [O]** | **~75 mil. Kč** | **~15–30 mil. Kč** | **~25–35 mil. Kč** |
+
+Jak vychází open-source sloupec **[O]**: software je zdarma, platí se lidé a HW.
+- rok 1 (stavba): 3–5 FTE × 2–2,5 mil. Kč = 6–12,5 mil. Kč,
+- roky 2 a 3 (provoz): 2–3 FTE × 2–2,5 mil. Kč × 2 roky = 8–15 mil. Kč,
+- HW: 1–3 mil. Kč,
+- celkem **~15–30 mil. Kč**. Pokud lidi SŽ už zaměstnává a jen jim změní náplň práce, je skutečný nový výdaj hlavně HW.
 
 Předpoklady **[O]**: 1 FTE síťového/automatizačního inženýra ≈ 2–2,5 mil. Kč ročně včetně odvodů; kurz ~23 Kč/USD; cena 100 USD/zař. platí i pro menší objem (nemusí – u hybridu může být jednotková cena vyšší).
 
