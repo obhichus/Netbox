@@ -140,6 +140,36 @@ NetBox na RHEL9 nepotřebuje internet. Pro data ze sítě jsou dvě cesty:
 - **IP Fabric dostupný není**: na stroji, který na něj vidí, uložit snímek do JSON (`IPF_DUMP_DIR`),
   přenést a nahrát přes `IPF_LOAD_DIR`. Postup je v [commatrix/README.md](commatrix/README.md).
 
+## Řešené problémy (výběr)
+
+Úplný seznam 87 problémů (78 z pilotu na Ubuntu, 9 z přípravy RHEL9 balíčku) s příznakem, příčinou a řešením je v [CHANGES.md](CHANGES.md). Tady jsou ty,
+na které se dá narazit znovu:
+
+| # | Příznak | Řešení |
+|---|---|---|
+| 11, 15, 20, 79 | build na NetBoxu 4.7 nebo s netbox_branching 1.2 padá v `collectstatic` | držet NetBox 4.6.10 a `netboxlabs-netbox-branching==1.1.3` |
+| 16, 17, 18 | pomalá/nestabilní linka, build a pull padají | `UV_HTTP_TIMEOUT=300`, `UV_CONCURRENT_DOWNLOADS=1`, DNS v `daemon.json`, opakování; offline balíček tohle na RHEL9 obchází |
+| 21, 83 | NetBox `unhealthy`, Redis `AuthenticationError`, nesedící hesla | hesla generuje `install.sh` na jednom místě; DB heslo už není v `plugins.py` |
+| 25, 29, 36 | plugin IP Fabricu: nesoulad verze SDK, 403 na snímky u demo účtu | extra `ipfabric_7_9` (pro firmu `ipfabric_7_5`), zdroj v režimu *remote* plněný `push_ipf_data.py` |
+| 28, 76 | „Failed to Authenticate“ | heslo s `$*` rozbalil bash; Python kód posílat přes `<<'PY'`, `ipf.env` čtou skripty samy (nesourcovat ho shellem) |
+| 34, 84 | nahraný skript končí `PermissionError` nebo není vidět | `deploy/install-commatrix.sh` (vlastník `netbox`, `ScriptModule`, restart) |
+| 37, 60, 64 | ingesce padá na `serial` NULL nebo na délce jména (151 znaků) | sloupce `nb_serial`/`nb_name` v `push_ipf_data.py` + upravené transform mapy |
+| 38 | duplicitní IP v globální tabulce | `ENFORCE_GLOBAL_UNIQUE = False` (ConfigRevision) |
+| 40 | VRF se při každém syncu zdvojují | prázdné RD musí jít jako `None`, `rd` není v textových sloupcích |
+| 42 | sync uvázne v `ready_to_merge` | nemergovat ručně `branch.merge()`, nechat `auto_merge` |
+| 47, 71 | falešné nálezy v matici, všechny na 1. hopu | zdrojová adresa nesmí být management adresa firewallu |
+| 55 | tlačítko Procházet nefunguje (Firefox snap přes RDP) | pole **cesta** ve skriptu v2 |
+| 59 | ingesce skončí `timeout` | `RQ_DEFAULT_TIMEOUT = 7200` v `configuration/extra.py` (samotná env proměnná nestačí) |
+| 61 | VLAN `vid must be >= 1` | VLAN 0 se filtrují už v `push_ipf_data.py` |
+| 62 | po přepnutí snímku zůstávají stará zařízení | úklid podle `ipfabric_ingestion`, viz provozní dokument kap. 7 |
+| 68 | po ingesci nula IP adres | `sn` musí zůstat mezi povinnými sloupci adres |
+| 78 | historie změn se maže po 90 dnech | `CHANGELOG_RETENTION`/`JOB_RETENTION` přes ConfigRevision (0 = nemazat) |
+| 80 | RHEL bez IPv6: `Address family not supported by protocol` | `GRANIAN_HOST=0.0.0.0` v `env/netbox.env` |
+| 81 | proměnné v quadletech prázdné | žádné `$PROMENNE` v `Exec`/`HealthCmd`, hesla v souborech |
+
+Otevřené: varování při startu (č. 12), IPv6 link-local (43), NEDOSTUPNÉ z VLAN 333 v demo síti (48),
+výchozí API pepper po migraci (85), chybějící pptx pro vedení (87).
+
 ## Známé věci
 
 - **Vypnuté IPv6** (`ipv6.disable=1`): NetBox nenastartuje s „Address family not supported by protocol“.
