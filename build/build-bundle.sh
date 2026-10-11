@@ -61,6 +61,14 @@ echo "== kontrola, ze plugin v obrazu je"
 "$CTR" run --rm --entrypoint /opt/netbox/venv/bin/python "$NETBOX_IMAGE" \
   -c "import ipfabric, ipfabric_netbox, netbox_branching; print('ipfabric_netbox OK, SDK', ipfabric.__version__)"
 
+echo "== kontrola, ze SDK pro kazdou podporovanou verzi IP Fabricu jde nainstalovat bez site a funguje"
+for v in 7.0 7.2 7.3 7.5 7.8 7.9 7.10 7.11; do
+  printf '   IP Fabric %-5s ' "$v"
+  "$CTR" run --rm --network none --entrypoint sh "$NETBOX_IMAGE" -c \
+    "/usr/local/bin/uv pip install -q --no-index --find-links /opt/ipfabric-wheels \$(sh /opt/ipfabric-wheels/sdk-spec.sh $v) \
+     && /opt/netbox/venv/bin/python /opt/ipfabric-wheels/check.py" || { echo "CHYBA: SDK pro IP Fabric $v"; exit 1; }
+done
+
 echo "== ukladam obrazy"
 save() { # $1 obraz, $2 soubor
   if [ "$CTR" = podman ]; then

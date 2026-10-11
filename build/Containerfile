@@ -19,14 +19,15 @@ RUN sed -i 's/--host "::"/--host "${GRANIAN_HOST:-::}"/' /opt/netbox/launch-netb
  && grep -q 'GRANIAN_HOST' /opt/netbox/launch-netbox.sh
 
 COPY build/plugin_requirements.txt /opt/netbox/plugin_requirements.txt
-RUN m=${IPF_VERSION#7.} \
- && /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt "ipfabric>=${IPF_VERSION}.0,<7.$((m + 1)).0"
+COPY build/ipfabric-sdk-spec.sh /opt/ipfabric-wheels/sdk-spec.sh
+COPY build/ipfabric-sdk-check.py /opt/ipfabric-wheels/check.py
+RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt $(sh /opt/ipfabric-wheels/sdk-spec.sh "$IPF_VERSION") \
+ && /opt/netbox/venv/bin/python /opt/ipfabric-wheels/check.py
 
 RUN /usr/local/bin/uv venv -q /tmp/dl \
  && /usr/local/bin/uv pip install -q --python /tmp/dl/bin/python pip \
  && for v in $IPF_SDK_VERSIONS; do \
-      m=${v#7.}; \
-      /tmp/dl/bin/python -m pip download -q --no-cache-dir -d /opt/ipfabric-wheels "ipfabric>=${v}.0,<7.$((m + 1)).0" || exit 1; \
+      /tmp/dl/bin/python -m pip download -q --no-cache-dir -d /opt/ipfabric-wheels $(sh /opt/ipfabric-wheels/sdk-spec.sh "$v") || exit 1; \
     done \
  && rm -rf /tmp/dl \
  && /opt/netbox/venv/bin/python -c "import ipfabric; print(ipfabric.__version__)" > /opt/ipfabric-wheels/INSTALLED

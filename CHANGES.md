@@ -91,6 +91,12 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - **Řešení:** `install-commatrix.sh` po restartu čeká na healthcheck (max. 5 minut).
 - **Stav:** vyřešeno.
 
+#### 91. SDK pro IP Fabric 7.5 (verze SŽ) v obrazu nefungovalo
+- **Příznak:** test na Rocky Linux 9: po přepnutí na 7.5 plugin hlásil `PydanticUserError: IPFClient is not fully defined; you should define LifeCycleHook`. Plugin by se na IP Fabric SŽ vůbec nepřipojil, i když instalace a přepnutí verze prošly.
+- **Příčina:** SDK `ipfabric` 7.5.x (7.5.0 až 7.5.2) nefunguje s knihovnou `niquests` 3.16 a novější, kterou obraz obsahuje (3.21). Ostatní verze SDK (7.0 až 7.3, 7.8 až 7.11) jsou v pořádku; ověřeno pro každou zvlášť.
+- **Řešení:** požadavky na SDK pro jednotlivé verze jsou na jednom místě v `build/ipfabric-sdk-spec.sh` (pro 7.5 navíc `niquests<3.16`) a obraz nese i potřebné wheely. `check.py` v obrazu ověří, že SDK opravdu vytvoří klienta; spouští se při stavbě obrazu, v `build-bundle.sh` pro všech 8 verzí bez sítě, v konfigurátoru i v testu. Konfigurátor odvozený obraz staví vždy znovu z aktuálního základu, aby po upgradu nezůstala stará verze NetBoxu.
+- **Stav:** vyřešeno.
+
 ## 2026-09-04 až 2026-09-18: stavba pilotu na Ubuntu stroji
 
 ### 2026-09-04: údržba Ubuntu hostitele a starý NetBox

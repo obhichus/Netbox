@@ -61,10 +61,14 @@ x '/opt/netbox-offline/deploy/backup.sh && ls -la /opt/netbox-offline/backups | 
 
 say "konfigurator IP Fabricu (verze 7.5, server neni dostupny -> ocekavany kod 2)"
 x 'printf "IPF_URL=https://ipfabric.test.invalid\nIPF_VERSION=7.5\nIPF_CA=\nIPF_SOURCE_NAME=test\nIPF_SOURCE_TYPE=remote\n" > /opt/netbox-offline/env/ipfabric.conf'
-set +e; x '/opt/netbox-offline/deploy/configure-ipfabric.py --apply'; rc=$?; set -e
+set +e; x '/opt/netbox-offline/deploy/configure-ipfabric.py --apply' 2>&1 | tee /tmp/konfigurator.log; rc=${PIPESTATUS[0]}; set -e
 [ "$rc" = 2 ] || { echo "konfigurator: neocekavany kod $rc"; exit 1; }
+# spojeni ma selhat na siti (server neexistuje), ne na chybe v SDK
+grep "SPOJENI SELHALO" /tmp/konfigurator.log | grep -Eq "Connect|Name|resolve|Errno|Timeout" \
+  || { echo "konfigurator: spojeni selhalo z jineho duvodu nez sit"; exit 1; }
 x 'grep -h ^Image= /etc/containers/systemd/netbox.container /etc/containers/systemd/netbox-worker.container'
 x 'podman exec netbox /opt/netbox/venv/bin/python -c "import ipfabric; print(\"SDK v bezicim NetBoxu\", ipfabric.__version__)"' | tee /dev/stderr | grep -q " 7\.5\."
+x 'podman exec netbox /opt/netbox/venv/bin/python /opt/ipfabric-wheels/check.py' | tee /dev/stderr | grep -q "SDK 7\.5\.[0-9]* OK"
 x 'curl -sf -o /dev/null -w "login po prepnuti HTTP %{http_code}\n" http://127.0.0.1:8000/login/'
 
 say "VSE OK"

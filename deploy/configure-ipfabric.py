@@ -153,25 +153,29 @@ def muze_cist_snapshoty(url, token, user, pwd, ca):
 
 
 def sdk_v_obrazu(image):
+    """Verze SDK v obrazu, jen kdyz SDK opravdu funguje (check.py vytvori klienta), jinak None."""
     r = run(["podman", "run", "--rm", "--network", "none", "--entrypoint", "/opt/netbox/venv/bin/python",
-             image, "-c", "import ipfabric; print(ipfabric.__version__)"], capture=True, check=False)
-    return r.stdout.strip().splitlines()[-1] if r.returncode == 0 and r.stdout.strip() else None
+             image, "/opt/ipfabric-wheels/check.py"], capture=True, check=False)
+    m = re.search(r"SDK (\S+) OK", r.stdout or "")
+    if not m:
+        print("   " + (r.stdout or "").strip().splitlines()[-1] if (r.stdout or "").strip() else "")
+    return m.group(1) if m else None
 
 
 def priprav_obraz(zaklad, verze):
     """Vrati obraz se SDK pro danou verzi; kdyz je potreba, postavi ho offline z wheelu."""
     if major_minor(sdk_v_obrazu(zaklad)) == verze:
         return zaklad
+    # Vzdy znovu z aktualniho zakladu: po upgradu balicku by stary odvozeny obraz nesl starou verzi NetBoxu.
     cil = "%s-ipf%s" % (zaklad, verze)
-    if run(["podman", "image", "exists", cil], check=False).returncode == 0 and major_minor(sdk_v_obrazu(cil)) == verze:
-        return cil
-    m = int(verze.split(".")[1])
-    spec = "ipfabric>=%s.0,<7.%d.0" % (verze, m + 1)
-    info("stavim %s (SDK %s, bez internetu)" % (cil, spec))
+    info("stavim %s (SDK pro IP Fabric %s, bez internetu)" % (cil, verze))
     with tempfile.TemporaryDirectory() as d:
         with open(os.path.join(d, "Containerfile"), "w") as f:
             f.write("FROM %s\n" % zaklad)
-            f.write("RUN /usr/local/bin/uv pip install --no-index --find-links /opt/ipfabric-wheels '%s' \\\n" % spec)
+            # sdk-spec.sh zna i dalsi omezeni pro danou verzi (napr. niquests pro 7.5)
+            f.write("RUN /usr/local/bin/uv pip install --no-index --find-links /opt/ipfabric-wheels"
+                    " $(sh /opt/ipfabric-wheels/sdk-spec.sh %s) \\\n" % verze)
+            f.write(" && /opt/netbox/venv/bin/python /opt/ipfabric-wheels/check.py \\\n")
             f.write(" && /opt/netbox/venv/bin/python -c 'import ipfabric, ipfabric_netbox; print(ipfabric.__version__)'"
                     " > /opt/ipfabric-wheels/INSTALLED\n")
         run(["podman", "build", "--pull=never", "--network", "none", "-t", cil, "-f", os.path.join(d, "Containerfile"), d])
