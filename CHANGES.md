@@ -85,6 +85,12 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - **Řešení:** `envval` při chybějícím souboru vrací prázdnou hodnotu.
 - **Stav:** vyřešeno.
 
+#### 90. Hned po `install.sh` NetBox chvíli neodpovídal
+- **Příznak:** test na Rocky Linux 9: instalace doběhla, ale okamžitý `curl http://127.0.0.1:8000/login/` skončil „connection refused“.
+- **Příčina:** `install-commatrix.sh` na konci restartuje `netbox` a `netbox-worker` a nečekal, až NetBox znovu naběhne.
+- **Řešení:** `install-commatrix.sh` po restartu čeká na healthcheck (max. 5 minut).
+- **Stav:** vyřešeno.
+
 ## 2026-09-04 až 2026-09-18: stavba pilotu na Ubuntu stroji
 
 ### 2026-09-04: údržba Ubuntu hostitele a starý NetBox

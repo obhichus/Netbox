@@ -34,4 +34,11 @@ PY
 
 # Worker si drzi nactene moduly; bez restartu by bezela stara verze skriptu.
 systemctl restart netbox.service netbox-worker.service
+
+# Po restartu NetBox chvili nebezi; pockat, at je hned pouzitelny (a navazujici kroky nepadaji).
+for _ in $(seq 1 60); do
+  podman healthcheck run netbox >/dev/null 2>&1 && break
+  sleep 5
+done
+podman healthcheck run netbox >/dev/null 2>&1 || { echo "NetBox po restartu neni zdravy, viz: journalctl -u netbox -n 200" >&2; exit 1; }
 echo "Hotovo. Skripty: Customization -> Scripts. Matice: /opt/netbox/netbox/scripts/<soubor>.csv"
