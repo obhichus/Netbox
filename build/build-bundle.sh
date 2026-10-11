@@ -76,6 +76,8 @@ save "$BATFISH_IMAGE" batfish.tar
 
 echo "== kopiruji konfiguraci a skripty"
 cp -r versions.env README.md configuration env quadlet deploy migrate commatrix docs "$OUT/"
+# kucharka instalace hned v koreni rozbaleneho balicku
+cp docs/INSTALACE-RHEL9.md "$OUT/INSTALACE.md"
 
 ( cd "$OUT" && find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS )
 tar -C dist -czf "dist/${NAME}.tar.gz" "$NAME"

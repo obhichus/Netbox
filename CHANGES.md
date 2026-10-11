@@ -16,6 +16,9 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - Batfish je součástí balíčku jako volitelná služba.
 - Konfigurátor napojení na IP Fabric `deploy/configure-ipfabric.py`: verze IP Fabricu SŽ (7.5), offline
   přepnutí SDK, CA certifikát, přístupy pro skripty a zdroj v pluginu (problém č. 88).
+- Kuchařka instalace `docs/INSTALACE-RHEL9.md` (v balíčku `INSTALACE.md`): požadavky, podman z DVD,
+  co kam se nainstaluje, root vs. uživatel, provoz, řešení potíží, odinstalace.
+- Test instalace balíčku na Rocky Linux 9 v GitHub Actions (`test/rhel9-e2e.sh`, instalace bez sítě).
 
 ### Problémy řešené při přípravě balíčku
 
