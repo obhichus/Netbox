@@ -9,7 +9,8 @@
 # jen se nahraji nove obrazy a restartuji sluzby (tak se dela i upgrade).
 set -euo pipefail
 
-SRC=$(cd "$(dirname "$0")/.." && pwd)
+# readlink: install.sh se spousti i pres odkaz /usr/sbin/netbox-offline-install (RPM)
+SRC=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)
 DEST=/opt/netbox-offline
 QUADLET_DIR=/etc/containers/systemd
 

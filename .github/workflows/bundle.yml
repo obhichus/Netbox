@@ -1,13 +1,14 @@
-# Postavi offline balicek pro RHEL9 a prilozi ho k GitHub Release.
-# Spusteni: Actions -> "Offline balicek RHEL9" -> Run workflow, nebo push tagu v*.
+# Postavi offline balicek pro RHEL9 (RPM + archiv) a prilozi ho k GitHub Release spolu s prezentaci.
+# Spusteni: Actions -> "Offline balicek RHEL9" -> Run workflow (tag napr. v1.0), nebo push tagu v*.
 name: Offline balicek RHEL9
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag release (napr. rhel9-2026.10.11)"
+        description: "Tag release (napr. v1.0)"
         required: true
+        default: "v1.0"
   push:
     tags: ["v*", "rhel9-*"]
 
@@ -16,21 +17,48 @@ permissions:
 
 jobs:
   bundle:
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
+      - name: Uvolnit misto na disku
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache && df -h /
+
       - name: Stavba balicku
         run: CTR=docker ./build/build-bundle.sh
+
+      - name: Stavba RPM
+        run: |
+          sudo apt-get install -y -q rpm
+          ./build/build-rpm.sh "$(ls dist/netbox-offline-*.tar.gz)"
+          rm -f dist/netbox-offline-*.tar.gz   # do release jdou casti .part-NN
 
       - name: Release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.tag || github.ref_name }}
         run: |
-          cd dist
+          cp docs/prezentace-vedeni/netbox-sz-vedeni.pptx docs/INSTALACE-RHEL9.md dist/
+          RPM=$(cd dist && ls netbox-offline-*.rpm)
+          cat > notes.md <<NOTES
+          ## Instalace na RHEL9 (9.2 a novější, bez internetu)
+
+          1. Stáhněte **\`$RPM\`** a přeneste ho na server.
+          2. Jako root:
+             \`\`\`
+             dnf install ./$RPM      # potřebuje podman (container-tools z DVD RHEL9)
+             netbox-offline-install
+             netbox-ipfabric-config  # napojení na IP Fabric (verze SŽ 7.5)
+             \`\`\`
+          3. NetBox: \`http://<server>:8000/\`
+
+          Podrobný návod: **INSTALACE-RHEL9.md** (přiložen). Prezentace pro vedení: **netbox-sz-vedeni.pptx**.
+          Místo RPM lze použít archiv \`*.tar.gz.part-*\` (postup v návodu, kapitola 2 a 3).
+          NOTES
           gh release view "$TAG" >/dev/null 2>&1 || \
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Offline balicek RHEL9 $TAG" \
-              --notes "Instalace: README.md, kapitola Postup (stahnout casti, slozit, overit, sudo ./deploy/install.sh)."
-          gh release upload "$TAG" netbox-offline-*.tar.gz.part-* netbox-offline-*.sha256 --clobber
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "NetBox + IP Fabric pro RHEL9 $TAG" --notes-file notes.md
+          cd dist
+          gh release upload "$TAG" netbox-offline-*.rpm netbox-offline-*.rpm.sha256 \
+            netbox-offline-*.tar.gz.part-* netbox-offline-*[0-9].sha256 \
+            netbox-sz-vedeni.pptx INSTALACE-RHEL9.md --clobber

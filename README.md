@@ -4,6 +4,10 @@ NetBox 4.6.10 s pluginem IP Fabric a sadou Python skriptů, které ověřují ko
 (kdo s kým smí v síti mluvit) proti skutečnému stavu sítě z IP Fabricu a hledají v ní chyby a díry.
 Repo obsahuje vše potřebné k provozu na **RHEL9 bez přístupu k internetu** (podman + systemd quadlety).
 
+**Ke stažení:** [Releases](https://github.com/obhichus/Netbox/releases) obsahuje RPM pro RHEL9
+(`dnf install ./netbox-offline-*.rpm && netbox-offline-install`), archiv po částech a prezentaci
+[netbox-sz-vedeni.pptx](https://github.com/obhichus/Netbox/raw/main/docs/prezentace-vedeni/netbox-sz-vedeni.pptx).
+
 **Instalace na RHEL9 krok za krokem: [docs/INSTALACE-RHEL9.md](docs/INSTALACE-RHEL9.md)** (v balíčku jako `INSTALACE.md`).
 
 | Kde | Co |
