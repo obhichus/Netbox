@@ -1,0 +1,4 @@
+# Valkey jako cache NetBoxu (bez perzistence)
+save ""
+appendonly no
+requirepass @REDIS_CACHE_PASSWORD@

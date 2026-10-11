@@ -1,0 +1,12 @@
+[Unit]
+Description=Monitoring kvality linky
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/linkmon.sh
+Restart=always
+StandardOutput=append:/var/log/linkmon.log
+StandardError=append:/var/log/linkmon.log
+
+[Install]
+WantedBy=multi-user.target

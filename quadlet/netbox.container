@@ -1,0 +1,30 @@
+[Unit]
+Description=NetBox - web
+Requires=netbox-postgres.service netbox-redis.service netbox-redis-cache.service
+After=netbox-postgres.service netbox-redis.service netbox-redis-cache.service
+
+[Container]
+ContainerName=netbox
+Image=@NETBOX_IMAGE@
+Pull=never
+Network=netbox.network
+PublishPort=@NETBOX_PORT@:8080
+EnvironmentFile=/opt/netbox-offline/env/netbox.env
+User=netbox
+Group=root
+Volume=/opt/netbox-offline/configuration/extra.py:/etc/netbox/config/extra.py:ro,z
+Volume=/opt/netbox-offline/configuration/plugins.py:/etc/netbox/config/plugins.py:ro,z
+Volume=netbox-media.volume:/opt/netbox/netbox/media
+Volume=netbox-reports.volume:/opt/netbox/netbox/reports
+Volume=netbox-scripts.volume:/opt/netbox/netbox/scripts
+HealthCmd=curl -f http://localhost:8080/login/ || exit 1
+HealthInterval=15s
+HealthStartPeriod=300s
+
+[Service]
+Restart=always
+# Prvni start provadi migrace databaze a muze trvat nekolik minut.
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

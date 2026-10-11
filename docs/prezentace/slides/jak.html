@@ -1,0 +1,29 @@
+<section id="jak" data-transition="fade" style="background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Jak to funguje</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Co je, proti tomu, co má být</h2>
+</div>
+<div style="display:flex;align-items:stretch;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #D3DDDB;border-top:6px solid #3E4E96;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600">IP Fabric</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">objeví síť a drží její skutečný stav: zařízení, cesty, ACL, NAT</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#0F6B70;width:56px;height:32px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #D3DDDB;border-top:6px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600">NetBox</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">drží zamýšlený stav: inventář, vlastníky a komunikační matici</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#0F6B70;width:56px;height:32px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #D3DDDB;border-top:6px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600">Kontrola</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">každý řádek matice se odsimuluje v modelu sítě</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#0F6B70;width:56px;height:32px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#DCEDEC;padding:36px;border:1px solid #0F6B70;border-top:6px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600;color:#0F6B70">Verdikt</h3>
+<p style="font-size:28px;line-height:1.4;color:#141C1B">CSV výstup a historie běhů přímo v NetBoxu</p>
+</div>
+</div>
+<p style="font-size:28px;color:#4A5A58">Data tečou jedním směrem. Žádný testovací provoz se do sítě neposílá.</p>
+<aside>Inventář nikdo neplnil ručně. Přišel ze snímku sítě a u každého objektu je vidět, ze kterého. Když se síť změní, import se spustí znovu a NetBox se dorovná. Kontrola je simulace nad modelem sítě, takže je bezpečná a dá se pustit i tam, kam bys testovací pakety neposlal.</aside>
+</section>

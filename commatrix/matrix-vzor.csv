@@ -1,0 +1,8 @@
+name,src,dst,proto,port,expected
+SSH mezi loopbacky L3-F4,10.0.0.30,10.0.0.40,tcp,22,allow
+HTTPS mezi loopbacky L3-F4,10.0.0.30,10.0.0.40,tcp,443,allow
+Telnet mezi loopbacky (zakazano),10.0.0.30,10.0.0.40,tcp,23,deny
+Management z uzivatelske site (zakazano),172.16.30.130,10.194.56.95,tcp,443,deny
+SSH na management L3,10.0.0.30,10.194.56.95,tcp,22,allow
+DNS mezi lokalitami,10.0.0.29,10.0.0.31,udp,53,allow
+SMB mezi lokalitami (zakazano),10.0.0.29,10.0.0.31,tcp,445,deny

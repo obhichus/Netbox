@@ -1,0 +1,4 @@
+# Valkey pro frontu uloh NetBoxu (perzistentni)
+dir /data
+appendonly yes
+requirepass @REDIS_PASSWORD@

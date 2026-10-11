@@ -1,0 +1,27 @@
+[Unit]
+Description=NetBox - worker (skripty, ingesce IP Fabric, housekeeping)
+Requires=netbox.service
+After=netbox.service
+
+[Container]
+ContainerName=netbox-worker
+Image=@NETBOX_IMAGE@
+Pull=never
+Network=netbox.network
+EnvironmentFile=/opt/netbox-offline/env/netbox.env
+Exec=/opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker
+User=netbox
+Group=root
+Volume=/opt/netbox-offline/configuration/extra.py:/etc/netbox/config/extra.py:ro,z
+Volume=/opt/netbox-offline/configuration/plugins.py:/etc/netbox/config/plugins.py:ro,z
+Volume=netbox-media.volume:/opt/netbox/netbox/media
+Volume=netbox-reports.volume:/opt/netbox/netbox/reports
+Volume=netbox-scripts.volume:/opt/netbox/netbox/scripts
+
+[Service]
+# Dokud web nedokonci migrace, worker padne; systemd ho spusti znovu.
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target

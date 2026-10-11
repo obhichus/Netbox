@@ -1,0 +1,20 @@
+[Unit]
+Description=NetBox - PostgreSQL
+
+[Container]
+ContainerName=netbox-postgres
+Image=@POSTGRES_IMAGE@
+Pull=never
+Network=netbox.network
+EnvironmentFile=/opt/netbox-offline/env/postgres.env
+Volume=netbox-postgres-data.volume:/var/lib/postgresql
+HealthCmd=pg_isready -q -t 2 -d netbox -U netbox
+HealthInterval=10s
+HealthStartPeriod=20s
+
+[Service]
+Restart=always
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

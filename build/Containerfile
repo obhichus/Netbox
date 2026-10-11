@@ -1,0 +1,18 @@
+# NetBox s pluginem IP Fabric. Stavi se na stroji s internetem (build/build-bundle.sh),
+# na RHEL9 se jen nahraje hotovy obraz.
+ARG NETBOX_BASE_IMAGE=docker.io/netboxcommunity/netbox:v4.6.10-5.0.2
+FROM ${NETBOX_BASE_IMAGE}
+
+# Granian v obrazu posloucha napevno na "::". Na RHEL s vypnutym IPv6 (ipv6.disable=1)
+# pak NetBox nenastartuje; GRANIAN_HOST=0.0.0.0 v env/netbox.env to resi.
+RUN sed -i 's/--host "::"/--host "${GRANIAN_HOST:-::}"/' /opt/netbox/launch-netbox.sh \
+ && grep -q 'GRANIAN_HOST' /opt/netbox/launch-netbox.sh
+
+COPY build/plugin_requirements.txt /opt/netbox/plugin_requirements.txt
+RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt
+
+# Konfigurace pluginu musi byt v obrazu uz pri collectstatic, jinak chybi CSS/JS pluginu.
+COPY configuration/plugins.py /etc/netbox/config/plugins.py
+COPY configuration/extra.py /etc/netbox/config/extra.py
+RUN DEBUG="true" SECRET_KEY="dummydummydummydummydummydummydummydummydummydummydummy" \
+    /opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py collectstatic --no-input

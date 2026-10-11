@@ -1,0 +1,497 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Provoz NetBoxu s IP Fabric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#F4F7F6; --surface:#FFFFFF; --surface-2:#EBF0EF;
+  --ink:#141C1B; --muted:#5A6A68; --line:#D3DDDB;
+  --accent:#0F6B70; --accent-soft:#DCEDEC;
+  --ok:#1F6B47; --ok-soft:#DDEDE3;
+  --bad:#A32E3D; --bad-soft:#F6DFE1;
+  --warn:#8A5100; --warn-soft:#F7E7CE;
+  --route:#3E4E96; --route-soft:#E1E5F5;
+  --shadow:0 1px 2px rgba(20,28,27,.06), 0 8px 24px -18px rgba(20,28,27,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1413; --surface:#141D1C; --surface-2:#1B2625;
+    --ink:#E4ECEA; --muted:#94A5A2; --line:#2A3736;
+    --accent:#4FB3B6; --accent-soft:#173231;
+    --ok:#6BC194; --ok-soft:#152A21;
+    --bad:#E98D97; --bad-soft:#2E1A1D;
+    --warn:#E0AE63; --warn-soft:#2C2115;
+    --route:#9AA8E6; --route-soft:#1B2039;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1413; --surface:#141D1C; --surface-2:#1B2625;
+  --ink:#E4ECEA; --muted:#94A5A2; --line:#2A3736;
+  --accent:#4FB3B6; --accent-soft:#173231;
+  --ok:#6BC194; --ok-soft:#152A21;
+  --bad:#E98D97; --bad-soft:#2E1A1D;
+  --warn:#E0AE63; --warn-soft:#2C2115;
+  --route:#9AA8E6; --route-soft:#1B2039;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;}
+.page{max-width:920px;margin:0 auto;padding:40px 24px 100px;}
+h1,h2,h3{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;text-wrap:balance;margin:0;}
+h1{font-size:clamp(2rem,5vw,2.8rem);font-weight:700;letter-spacing:-.015em;line-height:1.1;}
+h2{font-size:1.45rem;font-weight:700;letter-spacing:-.01em;}
+h3{font-size:1.02rem;font-weight:600;}
+p{margin:0;max-width:68ch;}
+a{color:var(--accent);}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86em;}
+ul,ol{margin:0;padding-left:1.25rem;max-width:68ch;}
+li{margin:.3rem 0;}
+
+.eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+header.masthead{display:flex;flex-direction:column;gap:18px;padding-bottom:26px;border-bottom:2px solid var(--ink);}
+.lede{font-size:1.08rem;color:var(--muted);max-width:64ch;}
+.meta{display:flex;flex-wrap:wrap;gap:8px 28px;font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.78rem;color:var(--muted);}
+.meta b{color:var(--ink);font-weight:500;}
+
+nav.toc{margin-top:34px;background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:18px 22px;}
+nav.toc ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 24px;}
+nav.toc li{margin:0;font-size:.9rem;}
+nav.toc .num{font-family:"IBM Plex Mono",ui-monospace,monospace;color:var(--accent);margin-right:8px;font-size:.82rem;}
+
+section{margin-top:50px;display:flex;flex-direction:column;gap:18px;scroll-margin-top:20px;}
+.section-head{display:flex;flex-direction:column;gap:6px;border-left:3px solid var(--accent);padding-left:14px;}
+.section-head .kap{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.74rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+
+.block{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:20px 22px;
+  display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);}
+.block h3{color:var(--ink);}
+
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 18px;
+  display:flex;flex-direction:column;gap:8px;}
+.callout.pozor{border-left-color:var(--bad);background:var(--bad-soft);}
+.callout strong{font-weight:600;}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface);}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem;}
+th{text-align:left;font-weight:600;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);padding:11px 15px;border-bottom:1px solid var(--line);background:var(--surface-2);white-space:nowrap;}
+td{padding:11px 15px;border-bottom:1px solid var(--line);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+
+pre{margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:3px;
+  padding:14px 16px;overflow-x:auto;font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.6;color:var(--ink);}
+.cmd{display:flex;flex-direction:column;gap:7px;}
+.cmd .label{font-size:.85rem;color:var(--muted);font-weight:500;}
+
+.flow{display:flex;flex-direction:column;gap:0;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.8rem;}
+.flow .krok{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:10px 0;border-bottom:1px dashed var(--line);}
+.flow .krok:last-child{border-bottom:none;}
+.flow .kdo{color:var(--accent);}
+.flow .co{color:var(--muted);font-family:"IBM Plex Sans",sans-serif;font-size:.92rem;}
+
+.chip{display:inline-block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;
+  letter-spacing:.04em;padding:3px 8px;border-radius:2px;white-space:nowrap;font-weight:500;}
+.chip.bad{background:var(--bad-soft);color:var(--bad);}
+.chip.warn{background:var(--warn-soft);color:var(--warn);}
+.chip.route{background:var(--route-soft);color:var(--route);}
+.chip.ok{background:var(--ok-soft);color:var(--ok);}
+
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+@media (max-width:600px){ .flow .krok{grid-template-columns:1fr;gap:2px;} }
+</style>
+
+<div class="page">
+
+<header class="masthead">
+  <div>
+    <div class="eyebrow">Provozní dokumentace</div>
+    <h1>Provoz NetBoxu s IP Fabric</h1>
+  </div>
+  <p class="lede">Jak se data z IP Fabricu dostávají do NetBoxu, proč to nejde jednodušší cestou, jak se přepíná mezi snímky sítě a odkud se bere komunikační matice, proti které se kontroluje.</p>
+  <div class="meta">
+    <span>Stroj <b>blue-ThinkCentre-M710s</b></span>
+    <span>NetBox <b>4.6.10</b></span>
+    <span>Plugin <b>ipfabric_netbox 6.1.0</b></span>
+    <span>IP Fabric <b>7.9.4</b></span>
+  </div>
+</header>
+
+<nav class="toc">
+  <ol>
+    <li><span class="num">1</span><a href="#architektura">Jak to funguje</a></li>
+    <li><span class="num">2</span><a href="#proc-ne">Proč nelze importovat soubor snímku</a></li>
+    <li><span class="num">3</span><a href="#snimky">Dva snímky a přepínání mezi nimi</a></li>
+    <li><span class="num">4</span><a href="#offline">Offline kopie snímku</a></li>
+    <li><span class="num">5</span><a href="#matice">Komunikační matice</a></li>
+    <li><span class="num">6</span><a href="#firewall">Matice z pravidel firewallu</a></li>
+    <li><span class="num">7</span><a href="#postupy">Provozní postupy</a></li>
+    <li><span class="num">8</span><a href="#problemy">Známá omezení a potíže</a></li>
+  </ol>
+</nav>
+
+<section id="architektura">
+  <div class="section-head">
+    <span class="kap">Kapitola 1</span>
+    <h2>Jak to funguje</h2>
+  </div>
+  <p>IP Fabric objevuje síť a drží její skutečný stav. NetBox drží stav zamýšlený — inventář, vlastníky, komunikační matici a historii kontrol. Data putují jedním směrem, z IP Fabricu do NetBoxu.</p>
+
+  <div class="block">
+    <div class="flow">
+      <div class="krok"><span class="kdo">IP Fabric API</span><span class="co">tabulky snímku se stahují dotazem na <span class="mono">/api/tables/…</span>, každý dotaz je vázaný na konkrétní snímek</span></div>
+      <div class="krok"><span class="kdo">push_ipf_data.py</span><span class="co">náš skript, mapuje jedenáct tabulek IP Fabricu na endpointy pluginu a ukládá řádky tak, jak jsou</span></div>
+      <div class="krok"><span class="kdo">IPFabricData</span><span class="co">surová data uvnitř NetBoxu, ještě to nejsou zařízení ani adresy — jen řádky čekající na zpracování</span></div>
+      <div class="krok"><span class="kdo">transform mapy</span><span class="co">předpis pluginu, jak z řádku vznikne objekt NetBoxu: která pole, jaké vazby, podle čeho se páruje s existujícím</span></div>
+      <div class="krok"><span class="kdo">větev</span><span class="co">ingesce nezapisuje do ostrých dat, nejdřív postaví návrh změn stranou</span></div>
+      <div class="krok"><span class="kdo">merge do Main</span><span class="co">teprve sloučení větve promítne změny do NetBoxu, se kterým pracují lidé</span></div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Režim zdroje je „remote", ne „local".</strong>
+    <p>Plugin umí data tahat sám (režim <span class="mono">local</span>), ale k tomu potřebuje na straně IP Fabricu oprávnění číst <span class="mono">/api/tables/management/snapshots</span>. Na demo serveru ho nemáme — vrací <span class="mono">403 API_INSUFFICIENT_RIGHTS</span>. Proto je zdroj nastavený jako <span class="mono">remote</span> a data do něj vkládá náš skript. Na firemní instanci má smysl o to oprávnění požádat a přejít na <span class="mono">local</span>; zbytek řetězce zůstane stejný.</p>
+  </div>
+</section>
+
+<section id="proc-ne">
+  <div class="section-head">
+    <span class="kap">Kapitola 2</span>
+    <h2>Proč nelze importovat soubor snímku přímo</h2>
+  </div>
+  <p>IP Fabric umí snímek stáhnout jako soubor — v UI u snímku volbou <b>Download</b>, přes API dotazem na <span class="mono">/api/snapshots/&lt;id&gt;/download</span>. Nabízí se otázka, proč ten soubor prostě nerozbalit a nenapsat si vlastní import v Pythonu. Odpověď má čtyři vrstvy a každá sama o sobě stačí k tomu, aby se do toho člověk nepouštěl.</p>
+
+  <div class="block">
+    <h3>Ten soubor není formát pro výměnu dat</h3>
+    <p>Je to interní archiv určený k nahrání zpátky do IP Fabricu, typicky na jinou instanci téhož produktu. Není to dokumentovaný formát, výrobce ho nepopisuje jako rozhraní a negarantuje jeho stabilitu. Co se v něm přečte dnes, nemusí platit po upgradu na další verzi.</p>
+  </div>
+
+  <div class="block">
+    <h3>Rozbalení by znamenalo zpětné inženýrství bez záruky</h3>
+    <p>Napsat parser nedokumentovaného formátu jde. Udržovat ho přes verze produktu, na kterém stojí důkazní řetězec pro NIS2, je něco jiného. První upgrade IP Fabricu, který změní vnitřní strukturu, shodí import a nikdo předem neřekne, kdy to nastane. U nástroje, jehož výstupem má být doklad pro auditora, je to nepřijatelné riziko.</p>
+  </div>
+
+  <div class="block">
+    <h3>Stejná data jsou dostupná dokumentovaným rozhraním</h3>
+    <p>To podstatné: všechno, co v archivu je, se dá přečíst přes API — a API je verzované, popsané a vázané na konkrétní snímek. Každý dotaz na tabulku přijímá parametr <span class="mono">snapshot</span>, takže i starý snímek je dotazovatelný, dokud je v IP Fabricu nahraný. Psát parser archivu znamená podstoupit velké riziko pro data, která jsou k dispozici bezpečnou cestou.</p>
+  </div>
+
+  <div class="block">
+    <h3>A hlavně: čtení souboru není ta těžká část</h3>
+    <p>Kdyby se archiv rozbalil, pořád bys měl jen tabulky. Práce, která z nich dělá použitelný inventář, je jinde — jak z řádku udělat zařízení, jak k němu přiřadit lokalitu, typ, platformu a rozhraní, podle čeho poznat, že tohle zařízení už v NetBoxu je, a co se má aktualizovat místo založení nového. Přesně to dělají transform mapy pluginu a je to několik set řádků logiky, kterou by vlastní import musel napsat znovu — včetně větvení, párování a zpracování chyb.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Závěr: formát souboru není překážka, kterou má smysl překonávat.</strong>
+    <p>Potřebu „mít snímek na disku a umět ho nahrát i bez připojení" jsme vyřešili jinak a bezpečně — stažením tabulek přes API do JSON souborů. Popsáno v kapitole 4.</p>
+  </div>
+</section>
+
+<section id="snimky">
+  <div class="section-head">
+    <span class="kap">Kapitola 3</span>
+    <h2>Dva snímky a přepínání mezi nimi</h2>
+  </div>
+  <p>Na demo serveru jsou k dispozici dva snímky, se kterými jsme pracovali. Nejsou to verze téže sítě — druhý je jiná, výrazně větší topologie, která se jen v některých názvech lokalit shoduje s první.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th></th><th>První snímek</th><th>Druhý snímek</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ID</td><td class="num">8dc4dd8b-afc0-46ae-<br>995c-38800e1df781</td><td class="num">22443e66-2430-4a55-<br>b953-d7601b3f5148</td></tr>
+        <tr><td>Lokality</td><td class="num">13</td><td class="num">21</td></tr>
+        <tr><td>Zařízení</td><td class="num">95</td><td class="num">365</td></tr>
+        <tr><td>Rozhraní</td><td class="num">873</td><td class="num">4 618</td></tr>
+        <tr><td>IPv4 adresy</td><td class="num">394</td><td class="num">1 713</td></tr>
+        <tr><td>VLAN</td><td class="num">25</td><td class="num">443</td></tr>
+        <tr><td>VRF</td><td class="num">139</td><td class="num">224</td></tr>
+        <tr><td>Řádků celkem</td><td class="num">1 647</td><td class="num">7 914</td></tr>
+        <tr><td>Charakter</td><td>laboratoř Paris / London / Frankfurt / Helsinki / Boston / Prague, MPLS jádro a AWS</td><td>reálnější síť s pobočkami L21–L77, adresní plán <span class="mono">10.&lt;lokalita&gt;.x</span>, AWS i Azure</td></tr>
+        <tr><td>Doba ingesce</td><td>zhruba 3 minuty</td><td>zhruba 25 minut</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout pozor">
+    <strong>Přepnutí snímku nevyčistí NetBox.</strong>
+    <p>Objekty z předchozího snímku, které v novém nejsou, zůstanou v NetBoxu viset jako zastaralé — po přechodu na druhý snímek jich zůstalo 85, včetně celého MPLS jádra. V matici by se pak tvářily jako existující zařízení. Úklid je v kapitole 7.</p>
+  </div>
+
+  <div class="cmd">
+    <span class="label">Návrat k prvnímu snímku</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T \
+  -e IPF_SNAPSHOT=8dc4dd8b-afc0-46ae-995c-38800e1df781 \
+  netbox /opt/netbox/netbox/manage.py shell &lt; /opt/commatrix/push_ipf_data.py</pre>
+  </div>
+  <div class="cmd">
+    <span class="label">Přepnutí na druhý snímek</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T \
+  -e IPF_SNAPSHOT=22443e66-2430-4a55-b953-d7601b3f5148 \
+  netbox /opt/netbox/netbox/manage.py shell &lt; /opt/commatrix/push_ipf_data.py</pre>
+  </div>
+  <p>Po pushi vždy následuje ingesce — viz kapitola 7. Pořadí je pevné: <b>push → ingesce → merge</b>, a merge dělá plugin sám, protože sync má zapnuté <span class="mono">auto_merge</span>.</p>
+</section>
+
+<section id="offline">
+  <div class="section-head">
+    <span class="kap">Kapitola 4</span>
+    <h2>Offline kopie snímku</h2>
+  </div>
+  <p>Skript <span class="mono">push_ipf_data.py</span> umí dva režimy podle proměnných prostředí. Tím je vyřešená potřeba pracovat bez připojení k IP Fabricu — na prezentaci u zákazníka, přes VPN, nebo když demo server nejede.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Proměnná</th><th>Co dělá</th></tr></thead>
+      <tbody>
+        <tr><td class="num">IPF_DUMP_DIR</td><td>při stahování z API zároveň uloží každou tabulku jako JSON do zadaného adresáře</td></tr>
+        <tr><td class="num">IPF_LOAD_DIR</td><td>místo dotazu na API načte tabulky z uloženého adresáře; přihlašovací údaje se vůbec nepoužijí</td></tr>
+        <tr><td class="num">IPF_SNAPSHOT</td><td>ID snímku v IP Fabricu, výchozí <span class="mono">$last</span></td></tr>
+        <tr><td class="num">IPF_SOURCE_NAME</td><td>název zdroje v NetBoxu, výchozí <span class="mono">guided-demo.eu.ipfabric.io</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cmd">
+    <span class="label">Stažení snímku na disk</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T \
+  -e IPF_SNAPSHOT=22443e66-2430-4a55-b953-d7601b3f5148 \
+  -e IPF_DUMP_DIR=/opt/netbox/netbox/scripts/snapshot-22443e66 \
+  netbox /opt/netbox/netbox/manage.py shell &lt; /opt/commatrix/push_ipf_data.py
+
+docker compose cp netbox:/opt/netbox/netbox/scripts/snapshot-22443e66 \
+  /opt/commatrix/snapshot-22443e66</pre>
+  </div>
+  <div class="cmd">
+    <span class="label">Import ze souborů, bez sítě</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T \
+  -e IPF_LOAD_DIR=/opt/netbox/netbox/scripts/snapshot-22443e66 \
+  netbox /opt/netbox/netbox/manage.py shell &lt; /opt/commatrix/push_ipf_data.py</pre>
+  </div>
+  <p>Druhý snímek zabere na disku zhruba 4,6 MB v deseti souborech. Poznávací znamení, že načítání ze souborů opravdu běží: ve výpisu je <span class="mono">Ctu ulozeny snapshot z …</span> místo <span class="mono">Pripojeno k …</span>.</p>
+</section>
+
+<section id="matice">
+  <div class="section-head">
+    <span class="kap">Kapitola 5</span>
+    <h2>Komunikační matice</h2>
+  </div>
+  <p>Matice je seznam tvrzení o tom, co spolu smí a nesmí komunikovat. Kontrola pak každé tvrzení ověří simulací cesty v IP Fabricu a porovná se skutečností. Formát je záměrně triviální, aby se dal udržovat i mimo IT:</p>
+
+  <pre>name,src,dst,proto,port,expected
+Sprava - SSH na pristupovy switch L35,10.39.255.1,10.35.255.194,tcp,22,allow
+Sprava - telnet na L35 je zakazan,10.39.255.1,10.35.255.194,tcp,23,deny</pre>
+
+  <h3 style="margin-top:8px">Odkud se bere za normálních okolností</h3>
+  <p>Matici nevyrábí síťař. Je to dokument zákazníka a vzniká ze tří zdrojů, obvykle kombinací:</p>
+  <ul>
+    <li><b>Architektura aplikací.</b> Vlastník systému ví, že aplikační server potřebuje na databázi a kam se hlásí uživatelé. Tohle je jediný zdroj, který říká, co má platit — zbylé dva říkají, co platí.</li>
+    <li><b>Workshop s aplikačními týmy.</b> Tam, kde dokumentace není, se matice sepisuje při jednání. Bývá to nejpracnější část celého zavedení a obvykle se poprvé dělá až kvůli NIS2.</li>
+    <li><b>Export pravidel ze stávajícího firewallu.</b> Popsáno v kapitole 6. Pozor na záměnu: z firewallu se nedozvíš, co má platit, jen co kdysi někdo povolil.</li>
+  </ul>
+
+  <h3 style="margin-top:8px">Odkud ji bereme my pro demo</h3>
+  <p>Zákazníka nemáme, takže matici skládáme z topologie, kterou jsme právě naimportovali. Postup je jednoduchý: z NetBoxu se vytáhne přehled lokalit, rolí zařízení a podsítí, a podle něj se napíší řádky, které dávají v takové síti smysl — správa prvků, provoz mezi pobočkami, infrastrukturní služby, přístup do cloudu a segmentační zákazy.</p>
+  <div class="cmd">
+    <span class="label">Přehled topologie jako podklad pro matici</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T netbox \
+  /opt/netbox/netbox/manage.py shell &lt;&lt;'PY'
+import collections
+from dcim.models import Site, Device
+from ipam.models import IPAddress
+for s in Site.objects.order_by('name'):
+    print(f'{s.name:&lt;34} {s.devices.count()}')
+for r, n in collections.Counter(str(d.role) for d in Device.objects.all()).most_common():
+    print(f'{r:&lt;20} {n}')
+c = collections.Counter()
+for a in IPAddress.objects.all():
+    if a.address.version == 4:
+        c[str(a.address.ip).rsplit('.', 1)[0] + '.0/24'] += 1
+for k, v in sorted(c.items()):
+    if v &gt;= 3:
+        print(f'{k:&lt;18} {v}')
+PY</pre>
+  </div>
+  <div class="callout pozor">
+    <strong>Matice je vázaná na snímek.</strong>
+    <p>Adresy v matici musí existovat v tom snímku, proti kterému se kontroluje. Matice psaná pro první snímek (<span class="mono">matice-demo.csv</span>, adresy <span class="mono">10.194.56.x</span> a <span class="mono">172.16.4x.x</span>) v druhém snímku nedává smysl — proto je pro něj samostatný soubor <span class="mono">matice-demo2.csv</span>.</p>
+  </div>
+
+  <h3 style="margin-top:8px">Jak se čte výsledek</h3>
+  <p>Celá hodnota kontroly stojí na tom, že „neprojde" nejsou dvě slova, ale tři různé situace s různým řešitelem:</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Verdikt</th><th>Co znamená</th><th>Kdo to řeší</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip ok">OK</span></td><td>skutečnost odpovídá matici</td><td>nikdo</td></tr>
+        <tr><td><span class="chip bad">PORUŠENÍ MATICE</span></td><td>zakázaná komunikace prochází</td><td>bezpečnost — je to díra, ne porucha</td></tr>
+        <tr><td><span class="chip warn">CHYBÍ PRAVIDLO</span></td><td>povolená komunikace je zahozena firewallem</td><td>správce pravidel</td></tr>
+        <tr><td><span class="chip route">NEDOSTUPNÉ</span></td><td>zahozeno bez účasti firewallu, chybí trasa</td><td>síťař — a tohle žádná analýza pravidel nenajde</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="firewall">
+  <div class="section-head">
+    <span class="kap">Kapitola 6</span>
+    <h2>Matice z pravidel firewallu</h2>
+  </div>
+  <p>Druhý směr: místo ověřování hotové matice se vezmou existující pravidla a pro každé se hledá opora. Tomu se říká obrácená kontrola a v auditu bývá nejvýnosnější, protože odhalí pravidla, která tam kdysi někdo dal a nikdo neví proč.</p>
+
+  <div class="block">
+    <h3>Postup</h3>
+    <ol>
+      <li><b>Export pravidel.</b> IP Fabric má tabulky bezpečnostních pravidel za každé zařízení, takže export nemusí jít přes správce firewallu — dá se vytáhnout ze snímku stejnou cestou jako inventář.</li>
+      <li><b>Převod na kandidátní řádky.</b> Z každého pravidla vznikne řádek ve tvaru matice: zdroj, cíl, protokol, port, a <span class="mono">expected=allow</span>, protože pravidlo tvrdí, že to má procházet.</li>
+      <li><b>Porovnání se schválenou maticí.</b> Řádky, které v matici oporu mají, jsou v pořádku. Řádky bez opory jsou nález — buď matici doplnit, nebo pravidlo zrušit.</li>
+      <li><b>Ověření průchodnosti.</b> U pravidel, která zůstanou, se ještě ověří, jestli vůbec něco dělají. Pravidlo, přes které nevede cesta, je mrtvé a jen zvětšuje plochu k auditu.</li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>Rozdíl, na kterém záleží.</strong>
+    <p>Matice odvozená z firewallu není schválená matice. Je to soupis současného stavu, který teprve někdo musí potvrdit nebo odmítnout. Kdo obojí zamění, získá dokument, který sám sebe potvrzuje a auditorovi neřekne nic.</p>
+  </div>
+  <p>Tato část zatím není zautomatizovaná — je to nejbližší krok, který má smysl dodělat. Vyžaduje doplnit mapování tabulek bezpečnostních pravidel do <span class="mono">push_ipf_data.py</span> a napsat převodník na formát matice.</p>
+</section>
+
+<section id="postupy">
+  <div class="section-head">
+    <span class="kap">Kapitola 7</span>
+    <h2>Provozní postupy</h2>
+  </div>
+
+  <div class="cmd">
+    <span class="label">Stav stacku a dat</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose ps --format 'table {{.Service}}\t{{.Status}}'
+
+docker compose exec -T netbox /opt/netbox/netbox/manage.py shell &lt;&lt;'PY'
+from dcim.models import Device, Interface
+from ipam.models import IPAddress, VLAN, VRF
+print('zarizeni:', Device.objects.count(), '| rozhrani:', Interface.objects.count(),
+      '| IP:', IPAddress.objects.count(), '| VLAN:', VLAN.objects.count(), '| VRF:', VRF.objects.count())
+PY</pre>
+  </div>
+
+  <div class="cmd">
+    <span class="label">Spuštění ingesce z příkazové řádky</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T netbox \
+  /opt/netbox/netbox/manage.py shell &lt;&lt;'PY'
+from ipfabric_netbox.models import IPFabricSync
+from users.models import User
+s = IPFabricSync.objects.first()
+u = User.objects.filter(is_superuser=True).order_by('pk').first()
+print('job:', s.enqueue_sync_job(adhoc=True, user=u))
+PY</pre>
+  </div>
+
+  <div class="cmd">
+    <span class="label">Úklid objektů z předchozího snímku</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T netbox \
+  /opt/netbox/netbox/manage.py shell &lt;&lt;'PY'
+from dcim.models import Device
+posledni = 15
+stare = [d.pk for d in Device.objects.all()
+         if d.custom_field_data.get('ipfabric_ingestion') != posledni]
+print('mazu:', len(stare))
+Device.objects.filter(pk__in=stare).delete()
+print('zbylo:', Device.objects.count())
+PY</pre>
+  </div>
+  <p>Číslo poslední ingesce najdeš v <b>IP Fabric → Ingestions</b>. Smazáním zařízení zmizí i jeho rozhraní a adresy. Právě kvůli tomuhle úklidu se při importu plní vlastní pole <span class="mono">ipfabric_source</span> a <span class="mono">ipfabric_ingestion</span> — bez nich by nešlo poznat, co je odkud.</p>
+
+  <div class="cmd">
+    <span class="label">Kontrola matice</span>
+    <pre>Přizpůsobení → Skripty → Kontrola komunikační matice — v2
+
+pole "matice"   nechat prázdné
+pole "cesta"    /opt/netbox/netbox/scripts/matice-demo2.csv
+pole "snapshot" 22443e66-2430-4a55-b953-d7601b3f5148</pre>
+  </div>
+  <p>Výsledky běhů jsou v <b>Operace → Pracovní místa</b> (v anglické lokalizaci Jobs, URL <span class="mono">/core/jobs/</span>). Každý běh má log s verdikty, odkazy na dotčená zařízení a stažitelný CSV výstup.</p>
+
+  <div class="cmd">
+    <span class="label">Nahrání upraveného skriptu bez webu</span>
+    <pre>cd /opt/netbox-docker
+docker compose cp /opt/commatrix/commatrix_v2.py netbox:/opt/netbox/netbox/scripts/commatrix_v2.py
+docker compose cp /opt/commatrix/commatrix_v2.py netbox-worker:/opt/netbox/netbox/scripts/commatrix_v2.py
+docker compose exec -T -u root netbox chown netbox:root /opt/netbox/netbox/scripts/commatrix_v2.py
+docker compose exec -T -u root netbox-worker chown netbox:root /opt/netbox/netbox/scripts/commatrix_v2.py
+docker compose restart netbox netbox-worker</pre>
+  </div>
+  <p>Skripty běží ve workeru, ne ve webovém kontejneru — soubor musí být v obou. Vlastníkem musí být <span class="mono">netbox</span>, jinak skončí na <span class="mono">PermissionError</span>.</p>
+</section>
+
+<section id="problemy">
+  <div class="section-head">
+    <span class="kap">Kapitola 8</span>
+    <h2>Známá omezení a potíže</h2>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Projev</th><th>Příčina a řešení</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Ingesce skončí stavem</b> <span class="mono">timeout</span>, nic se nesloučí</td>
+          <td>Výchozí <span class="mono">RQ_DEFAULT_TIMEOUT</span> 300 s nestačí na velký snímek. Nastaveno na 7200 v <span class="mono">/opt/netbox-docker/configuration/extra.py</span>, mění se restartem kontejnerů.</td>
+        </tr>
+        <tr>
+          <td><b>Sync uvázne</b> ve stavu <span class="mono">ready_to_merge</span> a tlačítko Synchronize je mrtvé</td>
+          <td>Někdo sloučil větev přímo přes <span class="mono">branch.merge()</span> a obešel tím stavový automat pluginu. Správná cesta je <span class="mono">enqueue_merge_job()</span>, což dělá <span class="mono">auto_merge</span> sám. Náprava: přepsat stav syncu na <span class="mono">completed</span>.</td>
+        </tr>
+        <tr>
+          <td><b>Zdroj hlásí</b> <span class="mono">Selhalo</span></td>
+          <td>Kosmetika režimu <span class="mono">remote</span> — plugin zkusí stáhnout seznam snímků, dostane 403 a poznamená si neúspěch. Na data to nemá vliv. Na stránce zdroje <b>nemačkej Synchronizovat</b>, to je synchronizace snímků, ne import dat.</td>
+        </tr>
+        <tr>
+          <td><b>Přibývají duplicitní VRF</b> při každém běhu</td>
+          <td>VRF se páruje na dvojici jméno + RD. Prázdné RD musí do NetBoxu přijít jako <span class="mono">None</span>, ne jako prázdný řetězec — jinak se shoda nikdy nenajde. Proto <span class="mono">rd</span> nesmí být v množině <span class="mono">TEXTOVE_SLOUPCE</span> v našem skriptu.</td>
+        </tr>
+        <tr>
+          <td><b>Zařízení padá na</b> <span class="mono">null value in column "serial"</span></td>
+          <td>Filtr pluginu zahodí sériové číslo delší než 50 znaků a sáhne po sloupci <span class="mono">id</span>, který mu ale ořezání dat nepředá. Opraveno v transform mapě: platné sériové číslo, jinak zkrácený hostname.</td>
+        </tr>
+        <tr>
+          <td><b>Zařízení padá na délce jména</b> (151 znaků)</td>
+          <td>Plugin rozlišuje zařízení se stejným jménem tak, že za jméno přilepí <span class="mono">- (sériové číslo)</span>. U azurových prostředků, jejichž identifikátor je celá cesta k prostředku, výsledek přeteče limit 64 znaků. Týká se jednoho objektu z 365, zatím neřešeno.</td>
+        </tr>
+        <tr>
+          <td><b>VLAN padá na</b> <span class="mono">vid must be &gt;= 1</span></td>
+          <td>V datech jsou tři VLAN s ID nula. Nejsou to VLAN, je to artefakt — filtrují se už při plnění dat.</td>
+        </tr>
+        <tr>
+          <td><b>Tlačítko Browse nereaguje</b> při nahrávání souboru</td>
+          <td>Firefox v Ubuntu je snap a výběr souboru jde přes <span class="mono">xdg-desktop-portal</span>, který ve vzdáleném sezení často neběží. Obejito polem <b>cesta</b> ve skriptu — soubor se čte přímo z kontejneru.</td>
+        </tr>
+        <tr>
+          <td><b>Nepřiřazené IPv6 adresy</b> (link-local)</td>
+          <td>IP tabulka udává zkrácené jméno rozhraní (<span class="mono">Gi0/1</span>), NetBox má <span class="mono">GigabitEthernet0/1</span>. Pro komunikační matici jsou link-local adresy nepodstatné, neřešíme.</td>
+        </tr>
+        <tr>
+          <td><b>Endpoint</b> <span class="mono">managed-networks</span> <b>hlásí nedostupnost</b></td>
+          <td>Neznáme správný název té tabulky v API 7.9. Důsledek: prefixy se neimportují. Ostatní endpointy tím nejsou dotčené.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Doplňující dokumentace ke stacku samotnému — spouštění, zálohy, hesla, změny verzí — je v souboru <span class="mono">/opt/netbox-docker/README.txt</span>. Skripty a datové soubory jsou v <span class="mono">/opt/commatrix/</span>.
+</footer>
+
+</div>
+
+</body></html>

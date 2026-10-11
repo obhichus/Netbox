@@ -1,0 +1,183 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Komunikační matice v NetBoxu</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>body{margin:0;background:#1b2625;font-family:'IBM Plex Sans',Arial,sans-serif}
+.frame{width:min(96vw,1280px);aspect-ratio:16/9;margin:24px auto 8px;overflow:hidden;position:relative;container-type:inline-size}
+.slide{width:1920px;height:1080px;transform-origin:0 0;transform:scale(calc(100cqw / 1920px))}
+.slide *{margin:0;box-sizing:border-box} .slide table{border-collapse:collapse;width:100%} .slide th,.slide td{text-align:left;padding:16px 24px;border-bottom:1px solid #D3DDDB}
+.notes{width:min(96vw,1280px);margin:0 auto 32px;color:#A9C2BF;font-size:15px;line-height:1.5}</style></head><body>
+<div class="frame"><div class="slide"><section id="cover" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#0F2A2B;color:#E4ECEA;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#4FB3B6">KyBe · ukázka</p>
+<div style="display:flex;flex-direction:column;gap:40px">
+<h1 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:120px;font-weight:700;line-height:1.05;color:#F4F7F6">Komunikační matice v NetBoxu</h1>
+<p style="font-size:44px;line-height:1.3;color:#A9C2BF">Automatická kontrola firewallových pravidel proti skutečnému stavu sítě</p>
+</div>
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;color:#A9C2BF">NetBox 4.6.10 · IP Fabric 7.9.4 (demo snímek) · 36 řádků matice · běh 24 s</p>
+
+</section>
+</div></div><p class="notes"><b>1.</b> Dvacet minut o tom, proč se vyplatí mít inventář sítě, který se plní sám, a co se z něj dá zjistit o firewallových pravidlech.</p><div class="frame"><div class="slide"><section id="problem" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Výchozí stav</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Komunikační matice je tvrzení, které nikdo neověřuje</h2>
+</div>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-radius:4px">
+<h3 style="font-size:44px;font-weight:600;color:#141C1B">Matice</h3>
+<p style="font-size:32px;line-height:1.4;color:#4A5A58">žije jako tabulka v Excelu: kdo s kým smí komunikovat a na jakých portech</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-radius:4px">
+<h3 style="font-size:44px;font-weight:600;color:#141C1B">Pravidla</h3>
+<p style="font-size:32px;line-height:1.4;color:#4A5A58">žijí v konfiguracích firewallů, routerů a cloudových ACL</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#DCEDEC;padding:40px;border:1px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:44px;font-weight:600;color:#0F6B70">Mezera</h3>
+<p style="font-size:32px;line-height:1.4;color:#141C1B">nikdo je pravidelně neporovnává, rozdíly najde až audit</p>
+</div>
+</div>
+
+</section>
+</div></div><p class="notes"><b>2.</b> Komunikační matice bývá tabulka v Excelu, kterou nikdo neověřuje. Tady je z ní vstup pro kontrolu: každý řádek se v modelu sítě odsimuluje a porovná s tím, co má platit.</p><div class="frame"><div class="slide"><section id="jak" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Jak to funguje</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Co je, proti tomu, co má být</h2>
+</div>
+<div style="display:flex;align-items:stretch;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #D3DDDB;border-top:6px solid #3E4E96;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600">IP Fabric</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">objeví síť a drží její skutečný stav: zařízení, cesty, ACL, NAT</p>
+</div>
+<div style="display:flex;align-items:center"><div style="clip-path:polygon(0 30%,60% 30%,60% 0,100% 50%,60% 100%,60% 70%,0 70%);background:#0F6B70;width:56px;height:32px"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #D3DDDB;border-top:6px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600">NetBox</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">drží zamýšlený stav: inventář, vlastníky a komunikační matici</p>
+</div>
+<div style="display:flex;align-items:center"><div style="clip-path:polygon(0 30%,60% 30%,60% 0,100% 50%,60% 100%,60% 70%,0 70%);background:#0F6B70;width:56px;height:32px"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:36px;border:1px solid #D3DDDB;border-top:6px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600">Kontrola</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">každý řádek matice se odsimuluje v modelu sítě</p>
+</div>
+<div style="display:flex;align-items:center"><div style="clip-path:polygon(0 30%,60% 30%,60% 0,100% 50%,60% 100%,60% 70%,0 70%);background:#0F6B70;width:56px;height:32px"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#DCEDEC;padding:36px;border:1px solid #0F6B70;border-top:6px solid #0F6B70;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600;color:#0F6B70">Verdikt</h3>
+<p style="font-size:28px;line-height:1.4;color:#141C1B">CSV výstup a historie běhů přímo v NetBoxu</p>
+</div>
+</div>
+<p style="font-size:28px;color:#4A5A58">Data tečou jedním směrem. Žádný testovací provoz se do sítě neposílá.</p>
+
+</section>
+</div></div><p class="notes"><b>3.</b> Inventář nikdo neplnil ručně. Přišel ze snímku sítě a u každého objektu je vidět, ze kterého. Když se síť změní, import se spustí znovu a NetBox se dorovná. Kontrola je simulace nad modelem sítě, takže je bezpečná a dá se pustit i tam, kam bys testovací pakety neposlal.</p><div class="frame"><div class="slide"><section id="inventar" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#EBF0EF;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Krok 1 · Inventář</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Inventář, který nikdo neopisoval</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px">
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;padding:32px 40px;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:96px;font-weight:500;line-height:1.1;color:#0F6B70">13</p><p style="font-size:28px;color:#4A5A58">lokalit</p></div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;padding:32px 40px;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:96px;font-weight:500;line-height:1.1;color:#0F6B70">95</p><p style="font-size:28px;color:#4A5A58">zařízení</p></div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;padding:32px 40px;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:96px;font-weight:500;line-height:1.1;color:#0F6B70">873</p><p style="font-size:28px;color:#4A5A58">rozhraní</p></div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;padding:32px 40px;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:96px;font-weight:500;line-height:1.1;color:#0F6B70">389</p><p style="font-size:28px;color:#4A5A58">IP adres</p></div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;padding:32px 40px;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:96px;font-weight:500;line-height:1.1;color:#0F6B70">25</p><p style="font-size:28px;color:#4A5A58">VLAN</p></div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;padding:32px 40px;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:96px;font-weight:500;line-height:1.1;color:#0F6B70">51</p><p style="font-size:28px;color:#4A5A58">VRF</p></div>
+</div>
+
+</section>
+</div></div><p class="notes"><b>4.</b> Organization → Sites, pak Devices → Devices. Otevři jedno zařízení a ukaž vlastní pole ipfabric_source a ipfabric_ingestion. Tohle nikdo neplnil ručně, přišlo to ze snímku sítě a u každého objektu je vidět, ze kterého.</p><div class="frame"><div class="slide"><section id="bilance" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Krok 2 · Běh kontroly</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">36 řádků matice proti snímku sítě, 24 sekund</h2>
+</div>
+<div style="display:flex;gap:24px">
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-top:8px solid #1F6B47;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:160px;font-weight:500;line-height:1;color:#1F6B47">18</p><p style="font-size:32px;font-weight:600">V pořádku</p><p style="font-size:24px;color:#4A5A58">skutečnost odpovídá matici</p></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-top:8px solid #A32E3D;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:160px;font-weight:500;line-height:1;color:#A32E3D">9</p><p style="font-size:32px;font-weight:600">Porušení matice</p><p style="font-size:24px;color:#4A5A58">zakázané prochází</p></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-top:8px solid #8A5100;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:160px;font-weight:500;line-height:1;color:#8A5100">4</p><p style="font-size:32px;font-weight:600">Chybí pravidlo</p><p style="font-size:24px;color:#4A5A58">povolené zahodí firewall</p></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-top:8px solid #3E4E96;border-radius:4px"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:160px;font-weight:500;line-height:1;color:#3E4E96">5</p><p style="font-size:32px;font-weight:600">Nedostupné</p><p style="font-size:24px;color:#4A5A58">chybí trasa, bez firewallu</p></div>
+</div>
+
+</section>
+</div></div><p class="notes"><b>5.</b> Customization → Scripts → Kontrola komunikacni matice. Nahraj matice-demo.csv, snapshot nech prázdný, Run Script. Běh trvá zhruba 25 sekund, na konci je řádek Shrnuti a stažitelný CSV výstup.</p><div class="frame"><div class="slide"><section id="verdikty" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Krok 3 · Čtení výsledku</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">„Neprojde“ jsou tři různé problémy s různým řešitelem</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:24px">
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-left:8px solid #A32E3D;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600;color:#A32E3D">Porušení matice</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">Zakázaná komunikace prochází. Je to díra, ne porucha.</p>
+<p style="font-size:28px;font-weight:600">Řeší: bezpečnost</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-left:8px solid #8A5100;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600;color:#8A5100">Chybí pravidlo</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">Povolenou komunikaci zahodí firewall. Rozhodnutí, které nikdo nezapsal.</p>
+<p style="font-size:28px;font-weight:600">Řeší: správce pravidel</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFFFF;padding:40px;border:1px solid #D3DDDB;border-left:8px solid #3E4E96;border-radius:4px">
+<h3 style="font-size:40px;font-weight:600;color:#3E4E96">Nedostupné</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5A58">Zahozeno bez účasti firewallu, chybí trasa. Analýza pravidel tohle nenajde.</p>
+<p style="font-size:28px;font-weight:600">Řeší: síťaři</p>
+</div>
+</div>
+
+</section>
+</div></div><p class="notes"><b>6.</b> Nezajímavé je, že něco neprojde. Zajímavé je, proč to neprojde: jestli to zakázal firewall, nebo tam prostě nevede cesta a nikdo o tom neví. Kategorie Nedostupné je ta, kterou žádná analýza samotných pravidel firewallu nenajde.</p><div class="frame"><div class="slide"><section id="nalezy" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Hlavní nálezy</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Co by zajímalo auditora</h2>
+</div>
+<table style="font-family:'IBM Plex Sans', Arial, sans-serif;font-size:28px;color:#141C1B;background:#FFFFFF;border:1px solid #D3DDDB">
+<tr><th style="width:46%">Nález</th><th style="width:30%">Cesta</th><th style="width:24%">Verdikt</th></tr>
+<tr><td>Telnet otevřený na 4 prvcích včetně firewallu</td><td>management, tcp/23</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>SSH z AWS do vnitřní sítě</td><td>4 hopy přes 3 ACL a NAT</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>SSH z AWS na management prvků</td><td>3 hopy, tcp/22</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>SSH, SMB a RDP mezi pobočkami</td><td>tcp/22, 445, 3389</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>DNS a NTP z poboček na jádro</td><td>udp/53, 123</td><td style="color:#8A5100">Chybí pravidlo</td></tr>
+<tr><td>Asymetrie Frankfurt ↔ Londýn</td><td>tam 7 hopů, zpět 1</td><td style="color:#3E4E96">Nedostupné</td></tr>
+</table>
+
+</section>
+</div></div><p class="notes"><b>7.</b> Zastav se u tří nálezů: telnet, SSH z cloudu dovnitř a asymetrie Londýn–Frankfurt. SSH z AWS na management je nejzávažnější, pokud by šlo o produkci. Asymetrie je typ chyby, který se z konfigurace firewallu nedá vyčíst vůbec.</p><div class="frame"><div class="slide"><section id="kazdounoc" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#0F6B70;color:#F4F7F6;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:48px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#DCEDEC">Krok 4 · Co s tím dál</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:120px;font-weight:700;line-height:1.05;color:#F4F7F6">Z jednorázového auditu průběžná kontrola</h2>
+<p style="font-size:40px;line-height:1.4;color:#DCEDEC">Skript může běžet každou noc. Pravidlo, které v matici není, uvidíme ráno, ne u příštího auditu.</p>
+<p style="font-size:32px;line-height:1.4;color:#DCEDEC"><b>Doklad pro NIS2:</b> kdy se kontrolovalo, co vyšlo a kdo to spustil, vše v historii NetBoxu.</p>
+
+</section>
+</div></div><p class="notes"><b>8.</b> Výstup je CSV, běh má v NetBoxu historii a skript umí běžet na plán. Tohle se dá pustit každou noc. Když někdo zítra otevře pravidlo, které v matici není, dozvíme se to ráno, ne u příštího auditu.</p><div class="frame"><div class="slide"><section id="otazky" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Časté otázky</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Na co se nejspíš zeptáte</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:24px">
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px 40px;border:1px solid #D3DDDB;border-radius:4px">
+<h3 style="font-size:32px;font-weight:600">Je to jen simulace?</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5A58">Ano, nad modelem sítě z konfigurací. Proto je bezpečná. Nenahrazuje pentest, ale najde i to, na co by si tester nevzpomněl.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px 40px;border:1px solid #D3DDDB;border-radius:4px">
+<h3 style="font-size:32px;font-weight:600">Jsou to reálná data?</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5A58">Ne, veřejný demo snímek IP Fabricu. Na naší instanci 7.5 se změní jen adresa a přihlašovací údaje.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px 40px;border:1px solid #D3DDDB;border-radius:4px">
+<h3 style="font-size:32px;font-weight:600">Kolik práce dá matice?</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5A58">Šest sloupců v CSV, 36 řádků vzniklo za večer. Reálnou matici stejně vyžaduje NIS2.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFFFF;padding:36px 40px;border:1px solid #D3DDDB;border-radius:4px">
+<h3 style="font-size:32px;font-weight:600">Navrhne i úpravu pravidel?</h3>
+<p style="font-size:26px;line-height:1.4;color:#4A5A58">Zatím ne. Teď řekne, které pravidlo chybí a kde. Návrhy změn jsou další krok, je na to připravený Batfish.</p>
+</div>
+</div>
+
+</section>
+</div></div><p class="notes"><b>9.</b> Proč NetBox, když analýzu dělá IP Fabric: IP Fabric ví, jak síť vypadá teď. NetBox drží, jak má vypadat, a k tomu historii běhů, oprávnění a plánování. Kontrola je tvrzení o shodě mezi tím, co má být, a co je, potřebuješ obojí. Na čem to může spadnout: na výběru zdrojové adresy. První běh měl čtrnáct falešných nálezů kvůli management adrese firewallu, po záměně za adresu switche se to srovnalo.</p><div class="frame"><div class="slide"><section id="dalsi" data-transition="fade" style="position:relative;box-sizing:border-box;width:1920px;height:1080px;background:#0F2A2B;color:#E4ECEA;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#4FB3B6">Další kroky</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#F4F7F6">Z dema do provozu</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:0">
+<div style="display:flex;gap:40px;align-items:baseline;padding:24px 0;border-top:1px solid #2A4746"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:44px;color:#4FB3B6">01</p><p style="font-size:36px;line-height:1.35;color:#E4ECEA">Napojit firemní IP Fabric 7.5 a získat oprávnění ke čtení snímků</p></div>
+<div style="display:flex;gap:40px;align-items:baseline;padding:24px 0;border-top:1px solid #2A4746"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:44px;color:#4FB3B6">02</p><p style="font-size:36px;line-height:1.35;color:#E4ECEA">Sepsat reálnou komunikační matici (stejně nutná kvůli NIS2)</p></div>
+<div style="display:flex;gap:40px;align-items:baseline;padding:24px 0;border-top:1px solid #2A4746"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:44px;color:#4FB3B6">03</p><p style="font-size:36px;line-height:1.35;color:#E4ECEA">Zapnout noční běh kontroly s historií výsledků</p></div>
+<div style="display:flex;gap:40px;align-items:baseline;padding:24px 0;border-top:1px solid #2A4746;border-bottom:1px solid #2A4746"><p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:44px;color:#4FB3B6">04</p><p style="font-size:36px;line-height:1.35;color:#E4ECEA">Batfish: návrhy konkrétních změn pravidel firewallu</p></div>
+</div>
+
+</section>
+</div></div><p class="notes"><b>10.</b> Plugin umí data tahat sám v režimu local, ale potřebuje na straně IP Fabricu oprávnění číst seznam snímků. Na demo serveru ho nemáme, proto teď data vkládá náš skript. Na firemní instanci má smysl o oprávnění požádat; zbytek řetězce zůstane stejný.</p>
+<script>/* zmena meritka pro prohlizece bez podpory cqw v transform */
+function fit(){document.querySelectorAll('.frame').forEach(f=>f.firstElementChild.style.transform='scale('+f.clientWidth/1920+')')};addEventListener('resize',fit);fit();</script>
+</body></html>
