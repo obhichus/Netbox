@@ -1,0 +1,16 @@
+<section id="nalezy" data-transition="fade" style="background:#F4F7F6;color:#141C1B;font-family:'IBM Plex Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:24px">
+<p style="font-family:'IBM Plex Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#0F6B70">Hlavní nálezy</p>
+<h2 style="font-family:'IBM Plex Sans Condensed', Arial, sans-serif;font-size:72px;font-weight:700;line-height:1.1;color:#141C1B">Co by zajímalo auditora</h2>
+</div>
+<table style="font-family:'IBM Plex Sans', Arial, sans-serif;font-size:28px;color:#141C1B;background:#FFFFFF;border:1px solid #D3DDDB">
+<tr><th style="width:46%">Nález</th><th style="width:30%">Cesta</th><th style="width:24%">Verdikt</th></tr>
+<tr><td>Telnet otevřený na 4 prvcích včetně firewallu</td><td>management, tcp/23</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>SSH z AWS do vnitřní sítě</td><td>4 hopy přes 3 ACL a NAT</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>SSH z AWS na management prvků</td><td>3 hopy, tcp/22</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>SSH, SMB a RDP mezi pobočkami</td><td>tcp/22, 445, 3389</td><td style="color:#A32E3D">Porušení matice</td></tr>
+<tr><td>DNS a NTP z poboček na jádro</td><td>udp/53, 123</td><td style="color:#8A5100">Chybí pravidlo</td></tr>
+<tr><td>Asymetrie Frankfurt ↔ Londýn</td><td>tam 7 hopů, zpět 1</td><td style="color:#3E4E96">Nedostupné</td></tr>
+</table>
+<aside>Zastav se u tří nálezů: telnet, SSH z cloudu dovnitř a asymetrie Londýn–Frankfurt. SSH z AWS na management je nejzávažnější, pokud by šlo o produkci. Asymetrie je typ chyby, který se z konfigurace firewallu nedá vyčíst vůbec.</aside>
+</section>

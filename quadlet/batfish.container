@@ -1,0 +1,18 @@
+[Unit]
+Description=Batfish (analyza konfiguraci site)
+
+[Container]
+ContainerName=batfish
+Image=@BATFISH_IMAGE@
+Pull=never
+Network=netbox.network
+PublishPort=8888:8888
+PublishPort=9996:9996
+PublishPort=9997:9997
+Volume=batfish-data.volume:/data
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

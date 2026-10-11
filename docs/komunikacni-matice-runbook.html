@@ -1,0 +1,438 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Komunikační matice v NetBoxu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#F4F7F6;
+  --surface:#FFFFFF;
+  --surface-2:#EBF0EF;
+  --ink:#141C1B;
+  --muted:#5A6A68;
+  --line:#D3DDDB;
+  --accent:#0F6B70;
+  --accent-soft:#DCEDEC;
+  --ok:#1F6B47;
+  --ok-soft:#DDEDE3;
+  --bad:#A32E3D;
+  --bad-soft:#F6DFE1;
+  --warn:#8A5100;
+  --warn-soft:#F7E7CE;
+  --route:#3E4E96;
+  --route-soft:#E1E5F5;
+  --shadow:0 1px 2px rgba(20,28,27,.06), 0 8px 24px -18px rgba(20,28,27,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1413;
+    --surface:#141D1C;
+    --surface-2:#1B2625;
+    --ink:#E4ECEA;
+    --muted:#94A5A2;
+    --line:#2A3736;
+    --accent:#4FB3B6;
+    --accent-soft:#173231;
+    --ok:#6BC194;
+    --ok-soft:#152A21;
+    --bad:#E98D97;
+    --bad-soft:#2E1A1D;
+    --warn:#E0AE63;
+    --warn-soft:#2C2115;
+    --route:#9AA8E6;
+    --route-soft:#1B2039;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1413;
+  --surface:#141D1C;
+  --surface-2:#1B2625;
+  --ink:#E4ECEA;
+  --muted:#94A5A2;
+  --line:#2A3736;
+  --accent:#4FB3B6;
+  --accent-soft:#173231;
+  --ok:#6BC194;
+  --ok-soft:#152A21;
+  --bad:#E98D97;
+  --bad-soft:#2E1A1D;
+  --warn:#E0AE63;
+  --warn-soft:#2C2115;
+  --route:#9AA8E6;
+  --route-soft:#1B2039;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -20px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:940px;margin:0 auto;padding:40px 24px 96px;}
+h1,h2,h3{font-family:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;text-wrap:balance;margin:0;}
+h1{font-size:clamp(2rem,5vw,2.9rem);font-weight:700;letter-spacing:-.015em;line-height:1.1;}
+h2{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;}
+h3{font-size:1.06rem;font-weight:600;}
+p{margin:0;}
+a{color:var(--accent);}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86em;}
+
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px;
+}
+header.masthead{
+  display:flex;flex-direction:column;gap:18px;
+  padding-bottom:28px;border-bottom:2px solid var(--ink);
+}
+.lede{font-size:1.09rem;color:var(--muted);max-width:62ch;}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 28px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.78rem;color:var(--muted);
+}
+.meta b{color:var(--ink);font-weight:500;}
+
+section{margin-top:52px;display:flex;flex-direction:column;gap:20px;}
+.section-head{display:flex;flex-direction:column;gap:6px;}
+.section-head p{color:var(--muted);max-width:64ch;}
+
+.steps{display:flex;flex-direction:column;gap:14px;}
+.step{
+  display:grid;grid-template-columns:52px 1fr;gap:0 20px;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:3px;padding:20px 22px;box-shadow:var(--shadow);
+}
+.step-num{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:1.5rem;font-weight:500;color:var(--accent);
+  line-height:1.1;padding-top:2px;
+}
+.step-body{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.step-body h3{color:var(--ink);}
+.step-body p{max-width:60ch;}
+.say{
+  border-left:3px solid var(--accent);
+  background:var(--accent-soft);
+  padding:10px 14px;font-style:italic;color:var(--ink);
+  max-width:62ch;
+}
+.expect{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.79rem;color:var(--muted);
+  padding-top:10px;border-top:1px dashed var(--line);
+}
+.expect b{color:var(--ink);font-weight:500;}
+
+.tally{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;
+}
+.tally div{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:2px;}
+.tally .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:1.7rem;font-weight:500;font-variant-numeric:tabular-nums;line-height:1;}
+.tally .l{font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+.n.ok{color:var(--ok);} .n.bad{color:var(--bad);} .n.warn{color:var(--warn);} .n.route{color:var(--route);}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface);}
+table{border-collapse:collapse;width:100%;min-width:660px;font-size:.9rem;}
+th{
+  text-align:left;font-weight:600;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface-2);
+  white-space:nowrap;
+}
+td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.path{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.78rem;color:var(--muted);white-space:nowrap;}
+td.what{color:var(--muted);}
+.chip{
+  display:inline-block;font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.7rem;letter-spacing:.04em;padding:3px 8px;border-radius:2px;white-space:nowrap;font-weight:500;
+}
+.chip.bad{background:var(--bad-soft);color:var(--bad);}
+.chip.warn{background:var(--warn-soft);color:var(--warn);}
+.chip.route{background:var(--route-soft);color:var(--route);}
+.chip.ok{background:var(--ok-soft);color:var(--ok);}
+
+.verdicts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.verdict{
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:16px 18px;display:flex;flex-direction:column;gap:8px;
+}
+.verdict .bar{height:3px;width:34px;border-radius:2px;}
+.verdict h3{font-size:.95rem;}
+.verdict p{font-size:.88rem;color:var(--muted);}
+
+.qa{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);}
+.qa > div{padding:18px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:7px;}
+.qa .q{font-weight:600;}
+.qa .a{color:var(--muted);max-width:66ch;}
+
+pre{
+  margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:3px;
+  padding:14px 16px;overflow-x:auto;font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.79rem;line-height:1.6;color:var(--ink);
+}
+.cmd{display:flex;flex-direction:column;gap:7px;}
+.cmd .label{font-size:.82rem;color:var(--muted);}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);}
+@media (prefers-reduced-motion:no-preference){a{transition:color .15s ease;}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+@media (max-width:560px){
+  .step{grid-template-columns:1fr;gap:10px;}
+  .step-num{font-size:1.1rem;}
+}
+</style>
+
+<div class="page">
+
+<header class="masthead">
+  <div>
+    <div class="eyebrow">Runbook · ukázka pro kolegy</div>
+    <h1>Komunikační matice v NetBoxu</h1>
+  </div>
+  <p class="lede">Dvacet minut o tom, proč se vyplatí mít inventář sítě, který se plní sám, a co se z něj dá zjistit o firewallových pravidlech. Postup, čísla a odpovědi na otázky, které padnou.</p>
+  <div class="meta">
+    <span>Prostředí <b>NetBox 4.6.10 · localhost:8000</b></span>
+    <span>Zdroj dat <b>IP Fabric 7.9.4 guided-demo</b></span>
+    <span>Snapshot <b class="mono">8dc4dd8b…1df781</b></span>
+    <span>Běh matice <b>24 s / 36 řádků</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="section-head">
+    <h2>Průběh</h2>
+    <p>Čtyři kroky, každý odpovídá na jednu otázku typu „a k čemu mi to je“. Pořadí není libovolné — každý krok stojí na tom předchozím.</p>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Inventář, který nikdo neopisoval</h3>
+        <p><b>Kam kliknout:</b> Organization → Sites, pak Devices → Devices. Otevři jedno zařízení a ukaž vlastní pole <span class="mono">ipfabric_source</span> a <span class="mono">ipfabric_ingestion</span>.</p>
+        <p class="say">„Tohle nikdo neplnil ručně. Přišlo to ze snímku sítě a u každého objektu je vidět, ze kterého. Když se síť změní, spustí se import znovu a NetBox se dorovná.“</p>
+        <div class="expect">Očekávaná čísla: <b>13 lokalit · 95 zařízení · 873 rozhraní · 389 IP adres · 25 VLAN · 51 VRF</b></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>Matice jako tvrzení, které jde ověřit</h3>
+        <p><b>Kam kliknout:</b> Customization → Scripts → <i>Kontrola komunikacni matice</i>. Nahraj <span class="mono">matice-demo.csv</span>, snapshot nech prázdný, Run Script.</p>
+        <p class="say">„Komunikační matice bývá tabulka v Excelu, kterou nikdo neověřuje. Tady je z ní vstup pro kontrolu — každý řádek se v modelu sítě odsimuluje a porovná s tím, co má platit.“</p>
+        <div class="expect">Doba běhu <b>~25 s</b> · na konci řádek <b>Shrnuti</b> a stažitelný CSV výstup</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Čtení výsledku</h3>
+        <p>Projdi shrnutí a zastav se u tří nálezů: telnet, SSH z cloudu dovnitř, a asymetrie Londýn–Frankfurt. Zbytek nech na tabulce níž.</p>
+        <p class="say">„Nezajímavé je, že něco neprojde. Zajímavé je, <em>proč</em> to neprojde — jestli to zakázal firewall, nebo tam prostě nevede cesta a nikdo o tom neví.“</p>
+        <div class="expect">Bilance: <b>OK 18 · porušení matice 9 · chybí pravidlo 4 · nedostupné 5</b></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Co s tím dál</h3>
+        <p>Výstup je CSV, běh má v NetBoxu historii a skript umí běžet na plán. Tím se z jednorázového auditu stává průběžná kontrola.</p>
+        <p class="say">„Tohle se dá pustit každou noc. Když někdo zítra otevře pravidlo, které v matici není, dozvíme se to ráno, ne u příštího auditu.“</p>
+        <div class="expect">Doklad pro NIS2: <b>kdy se kontrolovalo, co vyšlo, kdo to spustil</b> — vše v NetBoxu</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Bilance běhu</h2>
+    <p>Třicet šest řádků matice proti reálnému snímku sítě. Třináct z nich vyžaduje zásah.</p>
+  </div>
+
+  <div class="tally">
+    <div><span class="n ok">18</span><span class="l">v pořádku</span></div>
+    <div><span class="n bad">9</span><span class="l">porušení matice</span></div>
+    <div><span class="n warn">4</span><span class="l">chybí pravidlo</span></div>
+    <div><span class="n route">5</span><span class="l">nedostupné</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Nálezy</h2>
+    <p>Seřazeno podle toho, jak dobře se obhájí. První tři řádky jsou ty, na kterých se demo prodává.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Nález</th><th>Cesta</th><th>Verdikt</th><th>Co to znamená</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Telnet otevřený na čtyřech prvcích<br><span class="mono" style="color:var(--muted)">c0xr01 · d3xr01 · d4xr01 · vpn6xfw01</span></td>
+          <td class="path">10.194.56.85 → mgmt<br>tcp/23 · 1 hop</td>
+          <td><span class="chip bad">porušení matice</span></td>
+          <td class="what">Nešifrovaná správa je průchozí, včetně firewallu. Matice ji zakazuje, nic ji neblokuje. Klasický nález auditu.</td>
+        </tr>
+        <tr>
+          <td>SSH z AWS do vnitřní sítě</td>
+          <td class="path">10.2.34.74 → 172.16.33.27<br>tcp/22 · 4 hopy · ACL(3), NAT44(1)</td>
+          <td><span class="chip bad">porušení matice</span></td>
+          <td class="what">Provoz projde celou cestu přes tři ACL a NAT. Někdo to pravidlo napsal záměrně — a v matici pro to není opora.</td>
+        </tr>
+        <tr>
+          <td>SSH z AWS do managementu</td>
+          <td class="path">10.2.34.129 → 10.194.56.83<br>tcp/22 · 3 hopy · ACL(1)</td>
+          <td><span class="chip bad">porušení matice</span></td>
+          <td class="what">Cloudový segment se dostane na management prvků. Nejzávažnější z nálezů, pokud by šlo o produkci.</td>
+        </tr>
+        <tr>
+          <td>SSH, SMB a RDP mezi pobočkami</td>
+          <td class="path">Frankfurt ↔ Londýn ↔ Boston<br>tcp/22, 445, 3389 · 7–16 hopů</td>
+          <td><span class="chip bad">porušení matice</span></td>
+          <td class="what">Pobočky spolu mluví na portech, které mají být zavřené. Dlouhá cesta znamená, že to prochází přes páteř, ne jen lokálně.</td>
+        </tr>
+        <tr>
+          <td>DNS a NTP z poboček na jádro</td>
+          <td class="path">172.16.41.2 / 172.16.62.1 → 10.0.0.7<br>udp/53, 123 · 5–14 hopů</td>
+          <td><span class="chip warn">chybí pravidlo</span></td>
+          <td class="what">Provoz dojde až k cíli a tam ho zahodí zónová politika. Služba je v matici, pravidlo pro ni ne.</td>
+        </tr>
+        <tr>
+          <td>Boston na AWS NLB-private</td>
+          <td class="path">172.16.62.1 → 10.2.33.5<br>tcp/443 · 5 hopů · ZONEFW, NAT44</td>
+          <td><span class="chip warn">chybí pravidlo</span></td>
+          <td class="what">Totéž pro cloudovou službu — cesta existuje, povolení chybí.</td>
+        </tr>
+        <tr>
+          <td>Čtyři služby z londýnské VLAN 333</td>
+          <td class="path">172.16.33.27 → Frankfurt, syslog, 2× AWS<br>1 hop · FORWARDING</td>
+          <td><span class="chip route">nedostupné</span></td>
+          <td class="what">Zahozeno hned na prvním prvku a <em>bez účasti firewallu</em>. Chybí trasa. Všechny čtyři mají stejný zdroj — vypadá to na jednu příčinu.</td>
+        </tr>
+        <tr>
+          <td>SSH z jádra na firewall v Bostonu</td>
+          <td class="path">10.0.0.7 → 10.194.56.116<br>tcp/22 · 1 hop · FORWARDING</td>
+          <td><span class="chip route">nedostupné</span></td>
+          <td class="what">Správa firewallu z jádra nefunguje. Firewall o tom nic neví, protože se k němu provoz nedostane.</td>
+        </tr>
+        <tr>
+          <td>Asymetrie Frankfurt ↔ Londýn</td>
+          <td class="path">tam 7 hopů, zpět 1 hop<br>tcp/443</td>
+          <td><span class="chip route">nedostupné</span></td>
+          <td class="what">Jedním směrem to jde, druhým ne. Tenhle typ chyby se z konfigurace firewallu nedá vyčíst vůbec.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Čtyři verdikty</h2>
+    <p>Celý příběh stojí na tom, že „neprojde“ nejsou dvě slova, ale tři různé situace s různým řešitelem.</p>
+  </div>
+  <div class="verdicts">
+    <div class="verdict">
+      <div class="bar" style="background:var(--ok)"></div>
+      <h3>V pořádku</h3>
+      <p>Skutečnost odpovídá matici. Povolené projde, zakázané neprojde.</p>
+    </div>
+    <div class="verdict">
+      <div class="bar" style="background:var(--bad)"></div>
+      <h3>Porušení matice</h3>
+      <p>Zakázaná komunikace prochází. Řeší bezpečnost — je to díra, ne porucha.</p>
+    </div>
+    <div class="verdict">
+      <div class="bar" style="background:var(--warn)"></div>
+      <h3>Chybí pravidlo</h3>
+      <p>Povolená komunikace je zahozena firewallem. Řeší správce pravidel — vědomé rozhodnutí, které nikdo nezapsal.</p>
+    </div>
+    <div class="verdict">
+      <div class="bar" style="background:var(--route)"></div>
+      <h3>Nedostupné</h3>
+      <p>Zahozeno bez účasti firewallu — chybí trasa. Řeší síťař. <b>Tohle je kategorie, kterou žádná analýza pravidel nenajde.</b></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Na co se zeptají</h2>
+  </div>
+  <div class="qa">
+    <div>
+      <div class="q">Není to jen simulace? Reálně jste nic neposlali.</div>
+      <div class="a">Ano, je to simulace nad modelem sítě postaveným z konfigurací a stavu všech prvků. Proto je bezpečná — nedělá provoz a dá se pustit i tam, kam bys testovací pakety neposlal. Nenahrazuje penetrační test, ale najde věci, které test neodhalí, protože testuje jen to, na co si vzpomeneš.</div>
+    </div>
+    <div>
+      <div class="q">Kolik práce dá ta matice?</div>
+      <div class="a">Šest sloupců v CSV: název, zdroj, cíl, protokol, port, očekávání. Těch třicet šest řádků vzniklo za večer. Reálná matice se stejně musí napsat kvůli NIS2 — tady jen navíc dostane možnost se ověřit.</div>
+    </div>
+    <div>
+      <div class="q">Proč zrovna NetBox, když analýzu dělá IP Fabric?</div>
+      <div class="a">IP Fabric ví, jak síť vypadá teď. NetBox drží, jak má vypadat, a k tomu historii běhů, oprávnění a plánování. Kontrola je tvrzení o shodě mezi tím, co má být, a co je — potřebuješ obojí.</div>
+    </div>
+    <div>
+      <div class="q">Jsou to reálná data?</div>
+      <div class="a">Ne, je to veřejný demo snímek IP Fabricu — proto jsou v něm AWS účty a lokality jako Boston nebo Helsinki. Postup je ale identický, na naší instanci 7.5 se změní jen adresa a přihlašovací údaje.</div>
+    </div>
+    <div>
+      <div class="q">Na čem to může spadnout?</div>
+      <div class="a">Na výběru zdrojové adresy. První běh měl čtrnáct falešných nálezů, protože jsem cesty pouštěl z management adresy firewallu — provoz vycházející z firewallu zahodí jeho vlastní zónová politika hned na prvním hopu. Po záměně za adresu switche se to srovnalo. Poznávací znamení chyby tohoto typu: <span class="mono">hop 1</span> u všech řádků skupiny.</div>
+    </div>
+    <div>
+      <div class="q">Umí to i navrhnout, jak pravidla upravit?</div>
+      <div class="a">Zatím ne, to je další krok. Teď to řekne, které pravidlo chybí a kde. Návrh konkrétní změny znamená sáhnout na konfigurace firewallů — na to je v tom stacku připravený Batfish.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Kdyby něco</h2>
+    <p>Stack po restartu naběhne sám. Tohle jsou jediné příkazy, které bys mohl potřebovat.</p>
+  </div>
+  <div class="cmd">
+    <span class="label">Kontejnery neběží</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose up -d &amp;&amp; docker compose ps</pre>
+  </div>
+  <div class="cmd">
+    <span class="label">Ověření, že jsou data na místě</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T netbox \
+  /opt/netbox/netbox/manage.py shell -c \
+  "from dcim.models import Device; print(Device.objects.count())"</pre>
+  </div>
+  <div class="cmd">
+    <span class="label">Znovunačtení dat z IP Fabricu, kdyby bylo potřeba</span>
+    <pre>cd /opt/netbox-docker &amp;&amp; docker compose exec -T netbox \
+  /opt/netbox/netbox/manage.py shell &lt; /opt/commatrix/push_ipf_data.py</pre>
+  </div>
+  <div class="cmd">
+    <span class="label">Soubor s maticí</span>
+    <pre>/opt/commatrix/matice-demo.csv</pre>
+  </div>
+</section>
+
+<footer>
+  Podrobná dokumentace stacku je v <span class="mono">/opt/netbox-docker/README.txt</span>, kapitola 18 popisuje celý import z IP Fabricu včetně úprav transform map.
+</footer>
+
+</div>
+
+</body></html>

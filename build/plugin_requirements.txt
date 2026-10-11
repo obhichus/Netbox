@@ -1,0 +1,6 @@
+# Stejne verze jako na puvodnim stroji (NetBox 4.6.10).
+# Verzi SDK ipfabric (musi odpovidat verzi IP Fabricu) dosazuje build/Containerfile podle IPF_VERSION
+# a na RHEL9 ji lze zmenit offline pres deploy/configure-ipfabric.py.
+ipfabric_netbox==6.1.0
+# 1.2.x vyzaduje NetBox 4.7; posledni verze pro 4.6 je 1.1.3
+netboxlabs-netbox-branching==1.1.3

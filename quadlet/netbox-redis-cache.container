@@ -1,0 +1,16 @@
+[Unit]
+Description=NetBox - Valkey (cache)
+
+[Container]
+ContainerName=netbox-redis-cache
+Image=@VALKEY_IMAGE@
+Pull=never
+Network=netbox.network
+Exec=valkey-server /etc/valkey/valkey.conf
+Volume=/opt/netbox-offline/env/valkey-cache.conf:/etc/valkey/valkey.conf:ro,Z
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

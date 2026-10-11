@@ -1,0 +1,413 @@
+================================================================================
+PROVOZ NETBOXU S IP FABRIC
+Jak se data dostavaji do NetBoxu, proc to nejde jednodusi cestou,
+jak se prepina mezi snimky a odkud se bere komunikacni matice.
+
+Stroj:    blue-ThinkCentre-M710s
+NetBox:   4.6.10          Plugin: ipfabric_netbox 6.1.0
+IP Fabric: 7.9.4 (guided-demo.eu.ipfabric.io)
+Doplnkova dokumentace ke stacku: /opt/netbox-docker/README.txt
+================================================================================
+
+OBSAH
+  1. Jak to funguje
+  2. Proc nelze importovat soubor snimku primo
+  3. Dva snimky a prepinani mezi nimi
+  4. Offline kopie snimku
+  5. Komunikacni matice
+  6. Matice z pravidel firewallu
+  7. Provozni postupy
+  8. Znama omezeni a potize
+
+
+================================================================================
+1. JAK TO FUNGUJE
+================================================================================
+
+IP Fabric objevuje sit a drzi jeji skutecny stav. NetBox drzi stav zamysleny -
+inventar, vlastniky, komunikacni matici a historii kontrol. Data putuji jednim
+smerem, z IP Fabricu do NetBoxu.
+
+  IP Fabric API      tabulky snimku se stahuji dotazem na /api/tables/...,
+                     kazdy dotaz je vazany na konkretni snimek
+  push_ipf_data.py   nas skript, mapuje 11 tabulek IP Fabricu na endpointy
+                     pluginu a uklada radky tak, jak jsou
+  IPFabricData       surova data uvnitr NetBoxu, jeste to nejsou zarizeni
+                     ani adresy - jen radky cekajici na zpracovani
+  transform mapy     predpis pluginu, jak z radku vznikne objekt NetBoxu:
+                     ktera pole, jake vazby, podle ceho se paruje
+  vetev              ingesce nezapisuje do ostrych dat, nejdriv postavi
+                     navrh zmen stranou
+  merge do Main      teprve slouceni vetve promitne zmeny do NetBoxu
+
+REZIM ZDROJE JE "REMOTE", NE "LOCAL"
+Plugin umi data tahat sam (rezim local), ale potrebuje na strane IP Fabricu
+opravneni cist /api/tables/management/snapshots. Na demo serveru ho nemame,
+vraci 403 API_INSUFFICIENT_RIGHTS. Proto je zdroj nastaveny jako remote a data
+do nej vklada nas skript. Na firemni instanci ma smysl o to opravneni pozadat
+a prejit na local; zbytek retezce zustane stejny.
+
+
+================================================================================
+2. PROC NELZE IMPORTOVAT SOUBOR SNIMKU PRIMO
+================================================================================
+
+IP Fabric umi snimek stahnout jako soubor - v UI u snimku volbou Download,
+pres API dotazem na /api/snapshots/<id>/download. Nabizi se otazka, proc ten
+soubor proste nerozbalit a nenapsat si vlastni import v Pythonu. Odpoved ma
+ctyri vrstvy a kazda sama o sobe staci k tomu, aby se do toho clovek nepoustel.
+
+2.1 Ten soubor neni format pro vymenu dat
+    Je to interni archiv urceny k nahrani zpatky do IP Fabricu, typicky na
+    jinou instanci tehoz produktu. Neni to dokumentovany format, vyrobce ho
+    nepopisuje jako rozhrani a negarantuje jeho stabilitu. Co se v nem precte
+    dnes, nemusi platit po upgradu na dalsi verzi.
+
+2.2 Rozbaleni by znamenalo zpetne inzenyrstvi bez zaruky
+    Napsat parser nedokumentovaneho formatu jde. Udrzovat ho pres verze
+    produktu, na kterem stoji dukazni retezec pro NIS2, je neco jineho. Prvni
+    upgrade IP Fabricu, ktery zmeni vnitrni strukturu, shodi import a nikdo
+    predem nerekne, kdy to nastane.
+
+2.3 Stejna data jsou dostupna dokumentovanym rozhranim
+    Vsechno, co v archivu je, se da precist pres API - a API je verzovane,
+    popsane a vazane na konkretni snimek. Kazdy dotaz na tabulku prijima
+    parametr snapshot, takze i stary snimek je dotazovatelny, dokud je v
+    IP Fabricu nahrany. Psat parser archivu znamena podstoupit velke riziko
+    pro data, ktera jsou k dispozici bezpecnou cestou.
+
+2.4 A hlavne: cteni souboru neni ta tezka cast
+    Kdyby se archiv rozbalil, porad bys mel jen tabulky. Prace, ktera z nich
+    dela pouzitelny inventar, je jinde - jak z radku udelat zarizeni, jak k
+    nemu priradit lokalitu, typ, platformu a rozhrani, podle ceho poznat, ze
+    tohle zarizeni uz v NetBoxu je, a co se ma aktualizovat misto zalozeni
+    noveho. Presne to delaji transform mapy pluginu a je to nekolik set radku
+    logiky, kterou by vlastni import musel napsat znovu - vcetne vetveni,
+    parovani a zpracovani chyb.
+
+ZAVER
+Format souboru neni prekazka, kterou ma smysl prekonavat. Potrebu "mit snimek
+na disku a umet ho nahrat i bez pripojeni" jsme vyresili jinak a bezpecne -
+stazenim tabulek pres API do JSON souboru. Viz kapitola 4.
+
+
+================================================================================
+3. DVA SNIMKY A PREPINANI MEZI NIMI
+================================================================================
+
+Nejsou to verze teze site. Druhy je jina, vyrazne vetsi topologie, ktera se jen
+v nekterych nazvech lokalit shoduje s prvni.
+
+                        PRVNI SNIMEK          DRUHY SNIMEK
+  ID                    8dc4dd8b-afc0-46ae-   22443e66-2430-4a55-
+                        995c-38800e1df781     b953-d7601b3f5148
+  Lokality                          13                    21
+  Zarizeni                          95                   365
+  Rozhrani                         873                 4 618
+  IPv4 adresy                      394                 1 713
+  VLAN                              25                   443
+  VRF                              139                   224
+  Radku celkem                   1 647                 7 914
+  Doba ingesce              cca 3 minuty          cca 25 minut
+
+  Prvni:  laborator Paris / London / Frankfurt / Helsinki / Boston / Prague,
+          MPLS jadro a AWS
+  Druhy:  realnejsi sit s pobockami L21-L77, adresni plan 10.<lokalita>.x,
+          AWS i Azure
+
+POZOR: PREPNUTI SNIMKU NEVYCISTI NETBOX
+Objekty z predchoziho snimku, ktere v novem nejsou, zustanou v NetBoxu viset
+jako zastarale - po prechodu na druhy snimek jich zustalo 85, vcetne celeho
+MPLS jadra. V matici by se pak tvarily jako existujici zarizeni. Uklid je
+v kapitole 7.
+
+Navrat k prvnimu snimku:
+
+  cd /opt/netbox-docker && docker compose exec -T \
+    -e IPF_SNAPSHOT=8dc4dd8b-afc0-46ae-995c-38800e1df781 \
+    netbox /opt/netbox/netbox/manage.py shell < /opt/commatrix/push_ipf_data.py
+
+Prepnuti na druhy snimek:
+
+  cd /opt/netbox-docker && docker compose exec -T \
+    -e IPF_SNAPSHOT=22443e66-2430-4a55-b953-d7601b3f5148 \
+    netbox /opt/netbox/netbox/manage.py shell < /opt/commatrix/push_ipf_data.py
+
+Po pushi vzdy nasleduje ingesce. Poradi je pevne:
+  push -> ingesce -> merge
+Merge dela plugin sam, protoze sync ma zapnute auto_merge.
+
+
+================================================================================
+4. OFFLINE KOPIE SNIMKU
+================================================================================
+
+Skript push_ipf_data.py umi dva rezimy podle promennych prostredi.
+
+  IPF_DUMP_DIR      pri stahovani z API zaroven ulozi kazdou tabulku jako
+                    JSON do zadaneho adresare
+  IPF_LOAD_DIR      misto dotazu na API nacte tabulky z ulozeneho adresare;
+                    prihlasovaci udaje se vubec nepouziji
+  IPF_SNAPSHOT      ID snimku v IP Fabricu, vychozi $last
+  IPF_SOURCE_NAME   nazev zdroje v NetBoxu, vychozi guided-demo.eu.ipfabric.io
+
+Stazeni snimku na disk:
+
+  cd /opt/netbox-docker && docker compose exec -T \
+    -e IPF_SNAPSHOT=22443e66-2430-4a55-b953-d7601b3f5148 \
+    -e IPF_DUMP_DIR=/opt/netbox/netbox/scripts/snapshot-22443e66 \
+    netbox /opt/netbox/netbox/manage.py shell < /opt/commatrix/push_ipf_data.py
+
+  docker compose cp netbox:/opt/netbox/netbox/scripts/snapshot-22443e66 \
+    /opt/commatrix/snapshot-22443e66
+
+Import ze souboru, bez site:
+
+  cd /opt/netbox-docker && docker compose exec -T \
+    -e IPF_LOAD_DIR=/opt/netbox/netbox/scripts/snapshot-22443e66 \
+    netbox /opt/netbox/netbox/manage.py shell < /opt/commatrix/push_ipf_data.py
+
+Druhy snimek zabere na disku zhruba 4,6 MB v deseti souborech. Poznavaci
+znameni, ze nacitani ze souboru opravdu bezi: ve vypisu je
+"Ctu ulozeny snapshot z ..." misto "Pripojeno k ...".
+
+
+================================================================================
+5. KOMUNIKACNI MATICE
+================================================================================
+
+Matice je seznam tvrzeni o tom, co spolu smi a nesmi komunikovat. Kontrola pak
+kazde tvrzeni overi simulaci cesty v IP Fabricu a porovna se skutecnosti.
+
+Format:
+  name,src,dst,proto,port,expected
+  Sprava - SSH na pristupovy switch L35,10.39.255.1,10.35.255.194,tcp,22,allow
+  Sprava - telnet na L35 je zakazan,10.39.255.1,10.35.255.194,tcp,23,deny
+
+5.1 ODKUD SE BERE ZA NORMALNICH OKOLNOSTI
+Matici nevyrabi sitar. Je to dokument zakaznika a vznika ze tri zdroju:
+
+  - Architektura aplikaci. Vlastnik systemu vi, ze aplikacni server potrebuje
+    na databazi a kam se hlasi uzivatele. Tohle je jediny zdroj, ktery rika,
+    co MA platit - zbyle dva rikaji, co PLATI.
+  - Workshop s aplikacnimi tymy. Tam, kde dokumentace neni, se matice sepisuje
+    pri jednani. Byva to nejpracnejsi cast celeho zavedeni a obvykle se poprve
+    dela az kvuli NIS2.
+  - Export pravidel ze stavajiciho firewallu. Viz kapitola 6. Pozor na zamenu:
+    z firewallu se nedozvis, co ma platit, jen co kdysi nekdo povolil.
+
+5.2 ODKUD JI BEREME MY PRO DEMO
+Zakaznika nemame, takze matici skladame z topologie, kterou jsme prave
+naimportovali. Z NetBoxu se vytahne prehled lokalit, roli zarizeni a podsiti,
+a podle nej se napisi radky, ktere v takove siti davaji smysl - sprava prvku,
+provoz mezi pobockami, infrastrukturni sluzby, pristup do cloudu a segmentacni
+zakazy.
+
+Prehled topologie jako podklad:
+
+  cd /opt/netbox-docker && docker compose exec -T netbox \
+    /opt/netbox/netbox/manage.py shell <<'PY'
+  import collections
+  from dcim.models import Site, Device
+  from ipam.models import IPAddress
+  for s in Site.objects.order_by('name'):
+      print(f'{s.name:<34} {s.devices.count()}')
+  for r, n in collections.Counter(str(d.role) for d in Device.objects.all()).most_common():
+      print(f'{r:<20} {n}')
+  c = collections.Counter()
+  for a in IPAddress.objects.all():
+      if a.address.version == 4:
+          c[str(a.address.ip).rsplit('.', 1)[0] + '.0/24'] += 1
+  for k, v in sorted(c.items()):
+      if v >= 3:
+          print(f'{k:<18} {v}')
+  PY
+
+POZOR: MATICE JE VAZANA NA SNIMEK
+Adresy v matici musi existovat v tom snimku, proti kteremu se kontroluje.
+Matice psana pro prvni snimek (matice-demo.csv, adresy 10.194.56.x a
+172.16.4x.x) v druhem snimku nedava smysl - proto je pro nej samostatny soubor
+matice-demo2.csv.
+
+5.3 JAK SE CTE VYSLEDEK
+Cela hodnota kontroly stoji na tom, ze "neprojde" nejsou dve slova, ale tri
+ruzne situace s ruznym resitelem:
+
+  OK                  skutecnost odpovida matici          neresi nikdo
+  PORUSENI MATICE     zakazana komunikace prochazi        resi bezpecnost
+  CHYBI PRAVIDLO      povolena komunikace je zahozena     resi spravce pravidel
+                      firewallem
+  NEDOSTUPNE          zahozeno bez ucasti firewallu,      resi sitar - a tohle
+                      chybi trasa                         zadna analyza
+                                                          pravidel nenajde
+
+
+================================================================================
+6. MATICE Z PRAVIDEL FIREWALLU
+================================================================================
+
+Druhy smer: misto overovani hotove matice se vezmou existujici pravidla a pro
+kazde se hleda opora. Tomu se rika obracena kontrola a v auditu byva
+nejvynosnejsi, protoze odhali pravidla, ktera tam kdysi nekdo dal a nikdo nevi
+proc.
+
+POSTUP
+  1. Export pravidel. IP Fabric ma tabulky bezpecnostnich pravidel za kazde
+     zarizeni, takze export nemusi jit pres spravce firewallu - da se vytahnout
+     ze snimku stejnou cestou jako inventar.
+  2. Prevod na kandidatni radky. Z kazdeho pravidla vznikne radek ve tvaru
+     matice: zdroj, cil, protokol, port, a expected=allow, protoze pravidlo
+     tvrdi, ze to ma prochazet.
+  3. Porovnani se schvalenou matici. Radky, ktere v matici oporu maji, jsou
+     v poradku. Radky bez opory jsou nalez - bud matici doplnit, nebo pravidlo
+     zrusit.
+  4. Overeni pruchodnosti. U pravidel, ktera zustanou, se jeste overi, jestli
+     vubec neco delaji. Pravidlo, pres ktere nevede cesta, je mrtve a jen
+     zvetsuje plochu k auditu.
+
+ROZDIL, NA KTEREM ZALEZI
+Matice odvozena z firewallu NENI schvalena matice. Je to soupis soucasneho
+stavu, ktery teprve nekdo musi potvrdit nebo odmitnout. Kdo oboji zameni,
+ziska dokument, ktery sam sebe potvrzuje a auditorovi nerekne nic.
+
+STAV: nezautomatizovano. Vyzaduje doplnit mapovani tabulek bezpecnostnich
+pravidel do push_ipf_data.py a napsat prevodnik na format matice. Je to
+nejblizsi krok, ktery ma smysl dodelat.
+
+
+================================================================================
+7. PROVOZNI POSTUPY
+================================================================================
+
+7.1 STAV STACKU A DAT
+
+  cd /opt/netbox-docker && docker compose ps --format 'table {{.Service}}\t{{.Status}}'
+
+  cd /opt/netbox-docker && docker compose exec -T netbox \
+    /opt/netbox/netbox/manage.py shell <<'PY'
+  from dcim.models import Device, Interface
+  from ipam.models import IPAddress, VLAN, VRF
+  print('zarizeni:', Device.objects.count(), '| rozhrani:', Interface.objects.count(),
+        '| IP:', IPAddress.objects.count(), '| VLAN:', VLAN.objects.count(),
+        '| VRF:', VRF.objects.count())
+  PY
+
+7.2 SPUSTENI INGESCE Z PRIKAZOVE RADKY
+
+  cd /opt/netbox-docker && docker compose exec -T netbox \
+    /opt/netbox/netbox/manage.py shell <<'PY'
+  from ipfabric_netbox.models import IPFabricSync
+  from users.models import User
+  s = IPFabricSync.objects.first()
+  u = User.objects.filter(is_superuser=True).order_by('pk').first()
+  print('job:', s.enqueue_sync_job(adhoc=True, user=u))
+  PY
+
+7.3 UKLID OBJEKTU Z PREDCHOZIHO SNIMKU
+
+  cd /opt/netbox-docker && docker compose exec -T netbox \
+    /opt/netbox/netbox/manage.py shell <<'PY'
+  from dcim.models import Device
+  posledni = 15
+  stare = [d.pk for d in Device.objects.all()
+           if d.custom_field_data.get('ipfabric_ingestion') != posledni]
+  print('mazu:', len(stare))
+  Device.objects.filter(pk__in=stare).delete()
+  print('zbylo:', Device.objects.count())
+  PY
+
+Cislo posledni ingesce najdes v IP Fabric -> Ingestions. Smazanim zarizeni
+zmizi i jeho rozhrani a adresy. Prave kvuli tomuto uklidu se pri importu plni
+vlastni pole ipfabric_source a ipfabric_ingestion - bez nich by neslo poznat,
+co je odkud.
+
+7.4 KONTROLA MATICE
+
+  Prizpusobeni -> Skripty -> Kontrola komunikacni matice - v2
+
+    pole "matice"    nechat prazdne
+    pole "cesta"     /opt/netbox/netbox/scripts/matice-demo2.csv
+    pole "snapshot"  22443e66-2430-4a55-b953-d7601b3f5148
+
+Vysledky behu jsou v Operace -> Pracovni mista (v anglicke lokalizaci Jobs,
+URL /core/jobs/). Kazdy beh ma log s verdikty, odkazy na dotcena zarizeni a
+stazitelny CSV vystup.
+
+7.5 NAHRANI UPRAVENEHO SKRIPTU BEZ WEBU
+
+  cd /opt/netbox-docker
+  docker compose cp /opt/commatrix/commatrix_v2.py netbox:/opt/netbox/netbox/scripts/commatrix_v2.py
+  docker compose cp /opt/commatrix/commatrix_v2.py netbox-worker:/opt/netbox/netbox/scripts/commatrix_v2.py
+  docker compose exec -T -u root netbox chown netbox:root /opt/netbox/netbox/scripts/commatrix_v2.py
+  docker compose exec -T -u root netbox-worker chown netbox:root /opt/netbox/netbox/scripts/commatrix_v2.py
+  docker compose restart netbox netbox-worker
+
+Skripty bezi ve workeru, ne ve webovem kontejneru - soubor musi byt v obou.
+Vlastnikem musi byt netbox, jinak skonci na PermissionError.
+
+
+================================================================================
+8. ZNAMA OMEZENI A POTIZE
+================================================================================
+
+INGESCE SKONCI STAVEM "timeout", NIC SE NESLOUCI
+  Vychozi RQ_DEFAULT_TIMEOUT 300 s nestaci na velky snimek. Nastaveno na 7200
+  v /opt/netbox-docker/configuration/extra.py, meni se restartem kontejneru.
+
+SYNC UVAZNE VE STAVU "ready_to_merge" A TLACITKO SYNCHRONIZE JE MRTVE
+  Nekdo sloucil vetev primo pres branch.merge() a obesel tim stavovy automat
+  pluginu. Spravna cesta je enqueue_merge_job(), coz dela auto_merge sam.
+  Naprava: prepsat stav syncu na completed.
+
+ZDROJ HLASI "Selhalo"
+  Kosmetika rezimu remote - plugin zkusi stahnout seznam snimku, dostane 403
+  a poznamena si neuspech. Na data to nema vliv.
+  Na strance zdroje NEMACKEJ "Synchronizovat", to je synchronizace snimku,
+  ne import dat. Import se spousti v IP Fabric -> Syncs.
+
+PRIBYVAJI DUPLICITNI VRF PRI KAZDEM BEHU
+  VRF se paruje na dvojici jmeno + RD. Prazdne RD musi do NetBoxu prijit jako
+  None, ne jako prazdny retezec - jinak se shoda nikdy nenajde. Proto "rd"
+  nesmi byt v mnozine TEXTOVE_SLOUPCE v push_ipf_data.py.
+
+ZARIZENI PADA NA "null value in column serial"
+  Filtr pluginu zahodi seriove cislo delsi nez 50 znaku a sahne po sloupci id,
+  ktery mu ale orezani dat nepreda. Opraveno v transform mape: platne seriove
+  cislo, jinak zkraceny hostname.
+
+ZARIZENI PADA NA DELCE JMENA (151 znaku)
+  Plugin rozlisuje zarizeni se stejnym jmenem tak, ze za jmeno prilepi
+  "- (seriove cislo)". U azurovych prostredku, jejichz identifikator je cela
+  cesta k prostredku, vysledek prekroci limit 64 znaku. Tyka se jednoho objektu
+  z 365, zatim neresene.
+
+VLAN PADA NA "vid must be >= 1"
+  V datech jsou tri VLAN s ID nula. Nejsou to VLAN, je to artefakt - filtruji
+  se uz pri plneni dat.
+
+TLACITKO BROWSE NEREAGUJE PRI NAHRAVANI SOUBORU
+  Firefox v Ubuntu je snap a vyber souboru jde pres xdg-desktop-portal, ktery
+  ve vzdalenem sezeni casto nebezi. Obejito polem "cesta" ve skriptu - soubor
+  se cte primo z kontejneru.
+
+NEPRIRAZENE IPv6 ADRESY (link-local)
+  IP tabulka udava zkracene jmeno rozhrani (Gi0/1), NetBox ma
+  GigabitEthernet0/1. Pro komunikacni matici jsou link-local adresy
+  nepodstatne, neresime.
+
+ENDPOINT managed-networks HLASI NEDOSTUPNOST
+  Nezname spravny nazev te tabulky v API 7.9. Dusledek: prefixy se
+  neimportuji. Ostatni endpointy tim nejsou dotcene.
+
+
+================================================================================
+SOUBORY
+================================================================================
+  /opt/commatrix/push_ipf_data.py        plneni dat z IP Fabricu do NetBoxu
+  /opt/commatrix/commatrix_script.py     kontrola matice, verze 1
+  /opt/commatrix/commatrix_v2.py         kontrola matice, verze 2
+  /opt/commatrix/matice-demo.csv         matice pro prvni snimek
+  /opt/commatrix/matice-demo2.csv        matice pro druhy snimek
+  /opt/commatrix/snapshot-22443e66/      offline kopie druheho snimku
+  /opt/commatrix/ipf.env                 pristupove udaje (chmod 600)
+  /opt/netbox-docker/README.txt          dokumentace ke stacku samotnemu

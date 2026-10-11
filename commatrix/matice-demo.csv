@@ -1,0 +1,37 @@
+name,src,dst,proto,port,expected
+Sprava - SSH na paterni router c0xr01,10.194.56.85,10.194.56.66,tcp,22,allow
+Sprava - SSH na paterni router c0xr02,10.194.56.85,10.194.56.67,tcp,22,allow
+Sprava - SSH na London d3xr01,10.194.56.85,10.194.56.86,tcp,22,allow
+Sprava - SSH na Frankfurt d4xr01,10.194.56.85,10.194.56.97,tcp,22,allow
+Sprava - SSH na Helsinki d5xr01,10.194.56.85,10.194.56.107,tcp,22,allow
+Sprava - SSH na Boston d6xr01,10.194.56.85,10.194.56.113,tcp,22,allow
+Sprava - SSH na Paris d1xr01,10.194.56.85,10.194.56.69,tcp,22,allow
+Sprava - telnet na c0xr01 je zakazan,10.194.56.85,10.194.56.66,tcp,23,deny
+Sprava - telnet na d3xr01 je zakazan,10.194.56.85,10.194.56.86,tcp,23,deny
+Sprava - telnet na d4xr01 je zakazan,10.194.56.85,10.194.56.97,tcp,23,deny
+Sprava - telnet na vpn6xfw01 je zakazan,10.194.56.85,10.194.56.116,tcp,23,deny
+Monitoring - SNMP na c0xr01,10.194.56.85,10.194.56.66,udp,161,allow
+Monitoring - SNMP na d5xr01,10.194.56.85,10.194.56.107,udp,161,allow
+Sprava - HTTPS na loadbalancer lb3x01,10.194.56.85,10.194.56.101,tcp,443,allow
+Pobocky - Frankfurt na web v London,172.16.41.2,172.16.33.27,tcp,443,allow
+Pobocky - Boston na web v London,172.16.62.1,172.16.33.27,tcp,443,allow
+Pobocky - SSH mezi pobockami je zakazan,172.16.41.2,172.16.33.27,tcp,22,deny
+Pobocky - SMB mezi pobockami je zakazan,172.16.41.2,172.16.62.1,tcp,445,deny
+Pobocky - RDP mezi pobockami je zakazan,172.16.62.1,172.16.41.2,tcp,3389,deny
+Pobocky - London na web ve Frankfurtu,172.16.33.27,172.16.41.2,tcp,443,allow
+Pobocky - Frankfurt VLAN442 na web v London,172.16.42.2,172.16.33.27,tcp,443,allow
+Pobocky - ICMP dostupnost Frankfurt na Boston,172.16.41.2,172.16.62.1,icmp,0,allow
+Infrastruktura - DNS z Frankfurtu,172.16.41.2,10.0.0.7,udp,53,allow
+Infrastruktura - DNS z Bostonu,172.16.62.1,10.0.0.7,udp,53,allow
+Infrastruktura - NTP z Bostonu,172.16.62.1,10.0.0.7,udp,123,allow
+Infrastruktura - syslog z Londyna,172.16.33.27,10.0.0.7,udp,514,allow
+Cloud - London na AWS NLB1,172.16.33.27,10.2.34.74,tcp,443,allow
+Cloud - Frankfurt na AWS ALB,172.16.41.2,10.2.36.65,tcp,443,allow
+Cloud - Boston na AWS NLB-private,172.16.62.1,10.2.33.5,tcp,443,allow
+Cloud - London na AWS Consumer,172.16.33.27,10.2.32.129,tcp,443,allow
+Cloud - SSH z AWS do vnitrni site je zakazan,10.2.34.74,172.16.33.27,tcp,22,deny
+Cloud - SSH z AWS do managementu je zakazan,10.2.34.129,10.194.56.83,tcp,22,deny
+Segmentace - uzivatelska sit do managementu je zakazana,172.16.33.27,10.194.56.66,tcp,22,deny
+Segmentace - telnet z uzivatelske site je zakazan,172.16.41.2,10.194.56.97,tcp,23,deny
+Segmentace - lab do produkce je zakazan,10.192.1.1,172.16.33.27,tcp,443,deny
+Sprava - SSH z jadra na firewall v Bostonu,10.0.0.7,10.194.56.116,tcp,22,allow

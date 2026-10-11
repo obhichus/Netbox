@@ -1,0 +1,2 @@
+ipfabric_netbox[ipfabric_7_9]
+netboxlabs-netbox-branching<1.2

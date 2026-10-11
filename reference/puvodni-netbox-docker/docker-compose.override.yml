@@ -1,0 +1,35 @@
+services:
+  netbox:
+    image: netbox:v4.6.10-5.0.2-plugins
+    pull_policy: never
+    restart: unless-stopped
+    ports:
+      - 8000:8080
+    build:
+      context: .
+      dockerfile: Dockerfile-Plugins
+  netbox-worker:
+    image: netbox:v4.6.10-5.0.2-plugins
+    pull_policy: never
+    restart: unless-stopped
+
+  postgres:
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
+  redis-cache:
+    restart: unless-stopped
+
+  batfish:
+    image: batfish/allinone:latest
+    container_name: batfish
+    ports:
+      - "8888:8888"
+      - "9997:9997"
+      - "9996:9996"
+    restart: unless-stopped
+    volumes:
+      - batfish_data:/data
+
+volumes:
+  batfish_data:

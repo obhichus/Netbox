@@ -1,0 +1,41 @@
+name,src,dst,proto,port,expected
+Sprava - SSH na pristupovy switch L35,10.39.255.1,10.35.255.194,tcp,22,allow
+Sprava - SSH na pristupovy switch L48,10.39.255.1,10.48.255.136,tcp,22,allow
+Sprava - SSH na L3 switch L52,10.39.255.1,10.52.255.113,tcp,22,allow
+Sprava - SSH na firewall L71,10.39.255.1,10.71.255.140,tcp,22,allow
+Sprava - SSH na hranicni router L77,10.39.255.1,10.77.254.2,tcp,22,allow
+Sprava - SSH na core router L21,10.39.255.1,10.21.1.11,tcp,22,allow
+Sprava - telnet na L35 je zakazan,10.39.255.1,10.35.255.194,tcp,23,deny
+Sprava - telnet na L48 je zakazan,10.39.255.1,10.48.255.136,tcp,23,deny
+Sprava - telnet na L52 je zakazan,10.39.255.1,10.52.255.113,tcp,23,deny
+Sprava - telnet na firewall L71 je zakazan,10.39.255.1,10.71.255.140,tcp,23,deny
+Monitoring - SNMP na L35,10.39.255.1,10.35.255.194,udp,161,allow
+Monitoring - SNMP na L77,10.39.255.1,10.77.254.2,udp,161,allow
+Monitoring - SNMP na L21,10.39.255.1,10.21.1.11,udp,161,allow
+Pobocky - L39 na aplikaci v L35,10.39.1.101,10.35.6.12,tcp,443,allow
+Pobocky - L21 na aplikaci v L35,10.21.11.11,10.35.6.12,tcp,443,allow
+Pobocky - L48 na aplikaci v L35,10.48.139.136,10.35.6.12,tcp,443,allow
+Pobocky - L52 na aplikaci v L35,10.52.98.1,10.35.6.12,tcp,443,allow
+Pobocky - SSH mezi pobockami je zakazan,10.39.1.101,10.35.189.194,tcp,22,deny
+Pobocky - SMB mezi pobockami je zakazan,10.39.1.101,10.48.139.136,tcp,445,deny
+Pobocky - RDP mezi pobockami je zakazan,10.21.11.11,10.39.1.101,tcp,3389,deny
+Pobocky - ICMP dostupnost L39 na L21,10.39.1.101,10.21.11.11,icmp,0,allow
+Pobocky - ICMP dostupnost L48 na L77,10.48.139.136,10.77.13.1,icmp,0,allow
+Infrastruktura - DNS z L39 na DHCP server L52,10.39.1.101,10.52.98.1,udp,53,allow
+Infrastruktura - DNS z L21 na DHCP server L52,10.21.11.11,10.52.98.1,udp,53,allow
+Infrastruktura - DNS z L48 na zalozni server L52,10.48.139.136,10.52.99.1,udp,53,allow
+Infrastruktura - NTP z L39,10.39.1.101,10.52.98.1,udp,123,allow
+Infrastruktura - NTP z L48,10.48.139.136,10.52.98.1,udp,123,allow
+Infrastruktura - syslog z L35 na sber,10.35.6.12,10.52.255.98,udp,514,allow
+Firewall - L21 na sluzbu za firewallem L71,10.21.11.11,10.71.112.140,tcp,443,allow
+Firewall - L39 na sluzbu za firewallem L71,10.39.1.101,10.71.112.140,tcp,443,allow
+Firewall - SSH na cluster L71 je zakazan,10.39.1.101,10.71.112.130,tcp,22,deny
+Cloud - L39 do VPC v NEW-SITE-TEST,10.39.1.101,10.192.1.1,tcp,443,allow
+Cloud - L21 do laboratore IPF,10.21.11.11,10.192.0.136,tcp,443,allow
+Cloud - L35 do VPC v NEW-SITE-TEST,10.35.6.12,10.192.1.1,tcp,443,allow
+Cloud - SSH z cloudu do vnitrni site je zakazan,10.192.1.1,10.39.1.101,tcp,22,deny
+Cloud - SSH z cloudu do managementu je zakazan,10.192.1.1,10.35.255.194,tcp,22,deny
+Cloud - RDP z cloudu do pobocky je zakazan,10.192.1.1,10.21.11.11,tcp,3389,deny
+Segmentace - uzivatelska sit do managementu je zakazana,10.39.1.101,10.35.255.194,tcp,22,deny
+Segmentace - telnet z uzivatelske site je zakazan,10.21.11.11,10.48.255.136,tcp,23,deny
+Segmentace - uzivatelska sit na firewall L71 je zakazana,10.48.139.136,10.71.255.140,tcp,22,deny
