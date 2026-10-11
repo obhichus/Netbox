@@ -98,7 +98,7 @@ Jak vychází open-source sloupec **[O]**: software je zdarma, platí se lidé a
 
 Předpoklady **[O]**: 1 FTE síťového/automatizačního inženýra ≈ 2–2,5 mil. Kč ročně včetně odvodů; kurz ~23 Kč/USD; cena 100 USD/zař. platí i pro menší objem (nemusí – u hybridu může být jednotková cena vyšší).
 
-Čtení: i s pesimistickým odhadem lidí vychází open-source na **zhruba třetinu až polovinu**. Jenže lidi, kteří umějí SuzieQ, Batfish a Python, se na trhu těžko shánějí, a to je reálné riziko, ne položka v tabulce.
+Čtení: i s pesimistickým odhadem lidí vychází open-source na **zhruba 20–40 % ceny IP Fabricu**. Jenže lidi, kteří umějí SuzieQ, Batfish a Python, se na trhu těžko shánějí, a to je reálné riziko, ne položka v tabulce.
 
 Další páka: **při 10 000 zařízeních je 100 USD/zař. ceníková cena**. Výsledky pilotu jsou nejlepší argument pro vyjednávání slevy, i když se nakonec IP Fabric ponechá.
 
