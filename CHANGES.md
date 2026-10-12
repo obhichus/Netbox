@@ -4,6 +4,18 @@ Historie změn a všech problémů, které se při stavbě a provozu řešily. N
 Každý problém má **Příznak / Příčina / Řešení / Stav** (vyřešeno · obejito · otevřené).
 Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
+## 2026-10-12: ochrana větve main a údaje o repu
+
+- Repo má popis, homepage (Release v1.0), topics a zapnuté mazání větví po merge.
+- Ruleset „Ochrana main“: zákaz smazání a force-push, změny jen přes PR, povinný check `rhel9`,
+  admin může obejít. Nastaveno přes `gh` na vlastním stroji (skript `nastav-repo.sh` ve sdílených souborech projektu).
+- **Příznak:** zápis nastavení repa z cloudové session končí HTTP 403.
+  **Příčina:** proxy cloudového prostředí nepovoluje měnit nastavení repozitáře.
+  **Řešení:** spustit `gh api` na stroji, kde je `gh` přihlášený. **Stav:** obejito.
+- **Příznak:** PR jen s dokumentací by na povinný check `rhel9` čekal donekonečna.
+  **Příčina:** workflow měl `paths-ignore` pro dokumentaci, takže se vůbec nespustil.
+  **Řešení:** workflow běží u každého PR a u čistě dokumentačních změn kroky testu přeskočí. **Stav:** vyřešeno.
+
 ## 2026-10-12: jedna větev
 
 - Do `main` sloučena větev s rozborem open-source náhrady IP Fabricu
