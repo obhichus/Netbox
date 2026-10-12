@@ -1,9 +1,10 @@
 name: Test instalace na RHEL9
 # Postavi offline balicek a nainstaluje ho podle README na Rocky Linux 9 (RHEL9 kompatibilni)
 # se systemd a podmanem, po instalaci container-tools bez site. Viz test/rhel9-e2e.sh.
+# Check "rhel9" je povinny v rulesetu "Ochrana main", proto bezi u kazdeho PR. Kdyz PR meni jen
+# dokumentaci (docs/, *.md, reference/), test se preskoci a check rovnou projde.
 on:
   pull_request:
-    paths-ignore: ['docs/**', '**.md', 'reference/**']
   workflow_dispatch:
 
 jobs:
@@ -12,11 +13,31 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Zjistit, jestli PR meni neco mimo dokumentaci
+        id: zmeny
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -z "$BASE" ]; then echo "test=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          ostatni=$(git diff --name-only "$BASE"...HEAD | grep -vE '^(docs/|reference/)|\.md$' || true)
+          if [ -n "$ostatni" ]; then
+            echo "Zmenene soubory mimo dokumentaci:"; echo "$ostatni"
+            echo "test=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "PR meni jen dokumentaci, test se preskakuje."
+            echo "test=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Uvolnit misto na disku
+        if: steps.zmeny.outputs.test == 'true'
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache && df -h /
       - name: Postavit offline balicek
+        if: steps.zmeny.outputs.test == 'true'
         run: CTR=docker ./build/build-bundle.sh
       - name: Postavit RPM
+        if: steps.zmeny.outputs.test == 'true'
         run: sudo apt-get install -y -q rpm && ./build/build-rpm.sh "$(ls dist/netbox-offline-*.tar.gz)"
       - name: Instalace na Rocky Linux 9 a kontroly
+        if: steps.zmeny.outputs.test == 'true'
         run: ./test/rhel9-e2e.sh "$(ls dist/netbox-offline-*[0-9].sha256 | sed 's/\.sha256$//')"

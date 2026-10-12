@@ -220,6 +220,12 @@ na které se dá narazit znovu:
 Otevřené: varování při startu (č. 12), IPv6 link-local (43), NEDOSTUPNÉ z VLAN 333 v demo síti (48),
 výchozí API pepper po migraci (85).
 
+## Větve a CI
+
+`main` chrání ruleset „Ochrana main“: nejde smazat ani přepsat force-pushem, změny jdou jen přes PR
+a musí projít check `rhel9` (workflow „Test instalace na RHEL9“). Admin repa může pravidla obejít.
+U PR, které mění jen dokumentaci (`docs/`, `*.md`, `reference/`), se test přeskočí a check rovnou projde.
+
 ## Známé věci
 
 - **Vypnuté IPv6** (`ipv6.disable=1`): NetBox nenastartuje s „Address family not supported by protocol“.
