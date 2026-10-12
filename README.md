@@ -16,6 +16,7 @@ Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/
 |---|---|
 | [docs/INSTALACE-RHEL9.md](docs/INSTALACE-RHEL9.md) | kuchařka instalace: co nainstalovat, co kam zkopírovat, co spustit pod rootem |
 | [docs/PROJEKT.md](docs/PROJEKT.md) | o čem projekt je, proč a co má přinést |
+| [docs/opensource-misto-ipfabric.md](docs/opensource-misto-ipfabric.md) | dá se IP Fabric nahradit open-source nástroji? srovnání, škálování, TCO, pilot |
 | [docs/prezentace-vedeni/](docs/prezentace-vedeni/) | prezentace pro vedení SŽ (`netbox-sz-vedeni.pptx`, 18 slajdů) |
 | [docs/prezentace/](docs/prezentace/) | prezentace „Komunikační matice v NetBoxu“ (otevřít `prezentace.html`) |
 | [docs/provoz-netboxu-s-ipfabric.html](docs/provoz-netboxu-s-ipfabric.html) | provozní dokumentace (IP Fabric → NetBox, snímky, matice) |

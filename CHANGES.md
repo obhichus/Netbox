@@ -4,6 +4,13 @@ Historie změn a všech problémů, které se při stavbě a provozu řešily. N
 Každý problém má **Příznak / Příčina / Řešení / Stav** (vyřešeno · obejito · otevřené).
 Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
+## 2026-10-12: jedna větev
+
+- Do `main` sloučena větev s rozborem open-source náhrady IP Fabricu
+  ([docs/opensource-misto-ipfabric.md](docs/opensource-misto-ipfabric.md)), odkaz v README.
+- Všechny ostatní větve (`offline-rhel9`, `rpm-balik`, `ghcr-obraz` a pracovní větve Claude) smazány;
+  jejich obsah už v `main` byl. Tag `v1.0` zůstává.
+
 ## 2026-10-12: obraz v GitHub Packages
 
 - Workflow „Offline balicek RHEL9“ publikuje obraz NetBoxu s pluginy do `ghcr.io/obhichus/netbox-ipfabric`
