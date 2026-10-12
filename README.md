@@ -7,6 +7,8 @@ Repo obsahuje vše potřebné k provozu na **RHEL9 bez přístupu k internetu** 
 **Ke stažení:** [Releases](https://github.com/obhichus/Netbox/releases) obsahuje RPM pro RHEL9
 (`dnf install ./netbox-offline-*.rpm && netbox-offline-install`), archiv po částech a prezentaci
 [netbox-sz-vedeni.pptx](https://github.com/obhichus/Netbox/raw/main/docs/prezentace-vedeni/netbox-sz-vedeni.pptx).
+Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/container/netbox-ipfabric)
+(`podman pull ghcr.io/obhichus/netbox-ipfabric:4.6.10`, po `podman login ghcr.io` s tokenem `read:packages`).
 
 **Instalace na RHEL9 krok za krokem: [docs/INSTALACE-RHEL9.md](docs/INSTALACE-RHEL9.md)** (v balíčku jako `INSTALACE.md`).
 

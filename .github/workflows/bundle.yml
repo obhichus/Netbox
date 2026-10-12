@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  packages: write   # obraz NetBoxu do ghcr.io (zalozka Packages)
 
 jobs:
   bundle:
@@ -27,6 +28,19 @@ jobs:
 
       - name: Stavba balicku
         run: CTR=docker ./build/build-bundle.sh
+
+      - name: Obraz do GitHub Packages (ghcr.io)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          source versions.env
+          GHCR=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/netbox-ipfabric
+          echo "$GH_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for t in "${NETBOX_IMAGE##*:}" "$TAG" latest; do
+            docker tag "$NETBOX_IMAGE" "$GHCR:$t"
+            docker push "$GHCR:$t"
+          done
 
       - name: Stavba RPM
         run: |

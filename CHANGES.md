@@ -4,6 +4,13 @@ Historie změn a všech problémů, které se při stavbě a provozu řešily. N
 Každý problém má **Příznak / Příčina / Řešení / Stav** (vyřešeno · obejito · otevřené).
 Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
+## 2026-10-12: obraz v GitHub Packages
+
+- Workflow „Offline balicek RHEL9“ publikuje obraz NetBoxu s pluginy do `ghcr.io/obhichus/netbox-ipfabric`
+  (štítky verze NetBoxu, tagu release a `latest`); obraz má štítek `org.opencontainers.image.source`,
+  takže se zobrazí v záložce Packages repozitáře. RPM a archiv zůstávají v Releases.
+- Kuchařka: kapitola 2c (stažení obrazu z ghcr.io).
+
 ## 2026-10-11 (večer): RPM a release v1.0
 
 - `build/build-rpm.sh`: RPM `netbox-offline-<verze>-<datum>.el9.x86_64.rpm` (zstd, asi 1 GB). Rozbalí balíček do

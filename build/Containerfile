@@ -2,6 +2,8 @@
 # na RHEL9 se jen nahraje hotovy obraz.
 ARG NETBOX_BASE_IMAGE=docker.io/netboxcommunity/netbox:v4.6.10-5.0.2
 FROM ${NETBOX_BASE_IMAGE}
+LABEL org.opencontainers.image.source="https://github.com/obhichus/Netbox" \
+      org.opencontainers.image.description="NetBox s pluginy ipfabric_netbox a netbox_branching (offline balicek RHEL9)"
 
 # Verze IP Fabricu, pro kterou se do obrazu nainstaluje SDK (musi sedet major.minor).
 # Jinou verzi lze nastavit az na RHEL9 bez internetu: deploy/configure-ipfabric.py.

@@ -124,6 +124,20 @@ Přeneste je na server (USB disk, `scp`, sdílený disk), například do `/root/
 scp netbox-offline-* admin@server:/tmp/              # [uživatel], z vašeho počítače
 ```
 
+### 2c. Obraz NetBoxu z GitHub Packages (jen server s přístupem na ghcr.io)
+
+Obraz NetBoxu s pluginy je také v záložce **Packages** repozitáře jako `ghcr.io/obhichus/netbox-ipfabric`
+(štítky `4.6.10`, tag release, např. `v1.0`, a `latest`). Repozitář je soukromý, takže je potřeba přihlášení
+osobním tokenem GitHubu s právem `read:packages`:
+
+```bash
+podman login ghcr.io -u <uzivatel-github>              # heslo = token read:packages
+podman pull ghcr.io/obhichus/netbox-ipfabric:4.6.10
+podman tag ghcr.io/obhichus/netbox-ipfabric:4.6.10 localhost/netbox-ipfabric:4.6.10
+```
+
+Je to stejný obraz jako `images/netbox.tar` v balíčku. Instalace bez internetu dál jde z RPM nebo archivu.
+
 ---
 
 ## 3. Složení, kontrola a rozbalení **[root]**
