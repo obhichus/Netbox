@@ -59,18 +59,20 @@ chráněný) a vypíše odkaz na pull request; konfiguraci z netbox-dockeru ukl�
 
 ## Nedodělané – nepovažuj za hotové
 
-- **`commatrix/matice-demo2.csv`** má pořád dva slabé zdroje, které umírají na hopu 1
-  (Romanovými slovy: `10.52.103.101` → `10.52.98.1` a řádek „NTP z L77“ → `10.48.139.136`).
-  Dokud se ty záměny neudělají a kontrola se nespustí znovu, CSV generuje falešné nálezy (past 10.9).
-  Neukazovat kolegům jako skutečné nálezy.
+- **`commatrix/matice-demo2.csv`**: Roman psal o dvou slabých zdrojích, které umírají na hopu 1
+  (`10.52.103.101` → `10.52.98.1` a řádek „NTP z L77“ → `10.48.139.136`). Verze na Ubuntu PC (2026-10-24)
+  je shodná s repem a záměny už obsahuje (řádek „L52 na aplikaci v L35“ ze `10.52.98.1`, „NTP z L48“
+  z `10.48.139.136`). **Neověřeno je, že po záměně proběhla kontrola znovu bez nálezů na hopu 1/2**
+  (past 10.9). Dokud se to nestane, nálezy z této matice neukazovat kolegům jako skutečné.
 - **`fw_prehled_script.py`** nebyl nikdy spuštěn z nástěnky od začátku do konce. Je zaregistrovaný
   a proklik funguje, ale celý běh ověřený není.
 - Nálezy matice se neukládají jako Journal Entries, takže je nelze vypsat widgetem na nástěnce.
 - Neimportují se tabulky sousedů a linků (bez nich nelze kreslit topologii).
 - Nenamapovaný endpoint `managed-networks`: neimportovaných 104 hostů a 120 hraničních rozhraní.
 - **V repu zatím chybí** (Roman nemá přístup k Ubuntu stroji blue-ThinkCentre-M710s, doplní se až ho mít
-  bude, nejlépe během `commatrix/zaloha_na_git.sh`): JSONy z `export_konfigurace.py`, `matice-z-firewallu.csv`
-  a aktuální verze `matice-demo2.csv` (v repu je starší, bez řádků z bodu výše). Zda jsou skripty
+  bude, nejlépe během `commatrix/zaloha_na_git.sh`): JSONy z `export_konfigurace.py` (první pokus
+  2026-10-24 selhal, skript na PC ještě nebyl). `matice-z-firewallu.csv` a `matice-demo2.csv` už v repu jsou.
+  Zda jsou skripty
   v `commatrix/` poslední verze, není ověřeno (kontrolní součty: `sha256sum` proti `/opt/commatrix`).
 
 ## Co do repa nesmí

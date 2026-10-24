@@ -22,6 +22,9 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
   s kontrolou úniku hesel. Upraveno: commit do větve `zaloha-<datum>` místo chráněného `main` (push do main
   by byl odmítnut), konfigurace do `reference/puvodni-netbox-docker/` místo nové složky `netbox-docker/`,
   do `.gitignore` nepřidává celé `env/` (v repu jsou `env/*.example`). Zálohuje i `doklady/*.pdf`. Vyzkoušeno nanečisto. Stav: vyřešeno.
+- `commatrix/matice-z-firewallu.csv` doplněna z Ubuntu PC; `matice-demo2.csv` na PC je shodná s repem
+  (záměny slabých zdrojů už obsahuje, opakovaná kontrola neověřena). Export JSON na PC selhal, protože
+  `export_konfigurace.py` tam ještě nebyl. Stav: otevřené.
 - Kapitola 11 o záloze: [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md) (s poznámkou, v čem se upravená verze liší).
 - Doklad [commatrix/doklady/ipfabric-dashboard-22443e66.pdf](commatrix/doklady/ipfabric-dashboard-22443e66.pdf):
   dashboard IP Fabricu, proti kterému se ověřily počty po importu.

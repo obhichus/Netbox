@@ -17,7 +17,8 @@ Sprava - telnet na L35 je zakazan,10.39.255.1,10.35.255.194,tcp,23,deny
 | Soubor | Pro |
 |---|---|
 | `matice-demo.csv` | první demo snímek `8dc4dd8b-afc0-46ae-995c-38800e1df781` (36 řádků) |
-| `matice-demo2.csv` | druhý demo snímek `22443e66-2430-4a55-b953-d7601b3f5148` (40 řádků). **Nedodělané:** dva slabé zdroje umírají na hopu 1 a dávají falešné nálezy, viz [CLAUDE.md](../CLAUDE.md) |
+| `matice-demo2.csv` | druhý demo snímek `22443e66-2430-4a55-b953-d7601b3f5148` (40 řádků). Opakovaná kontrola po záměně slabých zdrojů neověřena, viz [CLAUDE.md](../CLAUDE.md) |
+| `matice-z-firewallu.csv` | kandidátní matice odvozená z pravidel firewallů (výstup `fw_na_matici.py`) |
 | `matrix-vzor.csv` | vzor formátu |
 | `doklady/ipfabric-dashboard-22443e66.pdf` | dashboard IP Fabricu ke snímku 22443e66 (referenční počty pro kontrolu importu) |
 
