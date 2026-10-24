@@ -51,9 +51,9 @@ souboru, žijí jen v databázi NetBoxu. Text map v kap. 9.6 je dokumentace, ne 
 [commatrix/export_konfigurace.py](commatrix/export_konfigurace.py) a výsledné JSONy patří do
 `export-konfigurace/` (adresář vznikne až exportem). Dokud tam nejsou, obnova od nuly není úplná.
 Na původním stroji zálohu do gitu (zdrojáky, konfigurace, export, kontrola úniku hesel) dělá
-[commatrix/zaloha_na_git.sh](commatrix/zaloha_na_git.sh). Pozor: commituje přímo do `main`, který je
-chráněný, takže push skončí odmítnutím, a kopíruje konfiguraci do `netbox-docker/` (v repu je jinak
-v `configuration/` a `reference/puvodni-netbox-docker/`).
+[commatrix/zaloha_na_git.sh](commatrix/zaloha_na_git.sh). Commituje do větve `zaloha-<datum>` (main je
+chráněný) a vypíše odkaz na pull request; konfiguraci z netbox-dockeru ukládá do
+`reference/puvodni-netbox-docker/`, `configuration/` (konfigurace pro RHEL9) nepřepisuje.
 
 ## Nedodělané – nepovažuj za hotové
 

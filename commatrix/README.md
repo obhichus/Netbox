@@ -107,7 +107,8 @@ Ve výpisu má být `Ctu ulozeny snapshot z …`. Pozor: kontrola matice (simula
 
 `zaloha_na_git.sh` (Romanův skript pro původní Ubuntu stroj) zkopíruje skripty a data z `/opt/commatrix`
 (`*.py *.csv *.txt *.md *.sh`, nikdy `ipf.env` ani `dump/`), vybrané soubory z `/opt/netbox-docker`
-(bez `env/`), spustí `export_konfigurace.py` a vyzvedne JSONy do `export-konfigurace/`. Před commitem
+(bez `env/`) do `reference/puvodni-netbox-docker/`, spustí `export_konfigurace.py` a vyzvedne JSONy do
+`export-konfigurace/`. Commituje do větve `zaloha-<datum>` (main je chráněný) a vypíše odkaz na pull request. Před commitem
 zkontroluje, že se nepřidává tajný soubor ani hodnota hesla z `ipf.env` nebo heslo zapsané v kódu
 (výjimky do `.zaloha-povoleno`). Volby `--bez-push`, `--bez-exportu`, `--zprava "text"`.
 

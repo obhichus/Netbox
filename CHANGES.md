@@ -19,7 +19,9 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - [docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md): Romanův souhrn projektu. Nedodělky z jeho
   části 9 (Journal Entries, sousedé a linky, `managed-networks`) přeneseny do CLAUDE.md. Stav: otevřené.
 - `commatrix/zaloha_na_git.sh` (od Romana): záloha zdrojáků, konfigurace a exportu z původního stroje do gitu
-  s kontrolou úniku hesel. Stav: otevřené (pushuje přímo do chráněného `main`).
+  s kontrolou úniku hesel. Upraveno: commit do větve `zaloha-<datum>` místo chráněného `main` (push do main
+  by byl odmítnut), konfigurace do `reference/puvodni-netbox-docker/` místo nové složky `netbox-docker/`,
+  do `.gitignore` nepřidává celé `env/` (v repu jsou `env/*.example`). Vyzkoušeno nanečisto. Stav: vyřešeno.
 - `.gitignore`: `ipf.env`, `netbox-docker/env/`, `fw_prehled.csv`, `fw_siroka_pravidla.csv`.
 - README: pořadí skriptů importu. CLAUDE.md: dvě nedodělané věci (slabé zdroje v `matice-demo2.csv`,
   neověřený celý běh `fw_prehled_script.py`). Stav: otevřené.

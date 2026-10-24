@@ -11,11 +11,16 @@
 #     --bez-exportu         preskoci export konfigurace z databaze
 #     --zprava "text"       vlastni text commitu
 #
+# Vetev main je chranena (zmeny jen pres pull request), proto skript
+# commituje do vetve zaloha-<datum> zalozene z aktualni main a po pushi
+# vypise odkaz, kterym se pull request otevre.
+#
 # Promenne prostredi (vsechny maji rozumnou vychozi hodnotu):
 #     REPO            adresa repozitare
 #     PRACOVNI        kam se repozitar klonuje
 #     COMMATRIX       slozka s vlastnimi skripty
 #     NETBOXDOCKER    slozka s nasazenim NetBoxu
+#     VETEV           vetev pro zalohu (vychozi zaloha-<datum>)
 #
 # Skript je idempotentni - lze ho poustet opakovane. Pokud se nic nezmenilo,
 # neudela zadny commit.
@@ -29,6 +34,7 @@ REPO="${REPO:-https://github.com/obhichus/Netbox.git}"
 PRACOVNI="${PRACOVNI:-$HOME/netbox-git}"
 COMMATRIX="${COMMATRIX:-/opt/commatrix}"
 NETBOXDOCKER="${NETBOXDOCKER:-/opt/netbox-docker}"
+VETEV="${VETEV:-zaloha-$(date +%Y-%m-%d)}"
 ZPRAVA=""
 PUSH=1
 EXPORT=1
@@ -42,7 +48,7 @@ while [ $# -gt 0 ]; do
         --bez-push)    PUSH=0 ;;
         --bez-exportu) EXPORT=0 ;;
         --zprava)      shift; ZPRAVA="${1:-}" ;;
-        -h|--help)     sed -n '3,26p' "$0"; exit 0 ;;
+        -h|--help)     sed -n '3,29p' "$0"; exit 0 ;;
         *)             printf 'Neznama volba: %s\n' "$1" >&2; exit 2 ;;
     esac
     shift
@@ -110,13 +116,28 @@ info "Pracovni kopie repozitare"
 
 if [ -d "$PRACOVNI/.git" ]; then
     detail "existuje, aktualizuji"
-    git -C "$PRACOVNI" pull --ff-only || varovani "pull selhal, pokracuji s lokalnim stavem"
 else
     detail "klonuji"
     git clone "$REPO" "$PRACOVNI" || chyba "klonovani selhalo - je repozitar soukromy a mas tu token?"
 fi
 
-mkdir -p "$PRACOVNI/commatrix" "$PRACOVNI/netbox-docker"
+# Zaloha jde do vlastni vetve, main je chranena. Kdyz vetev dnesniho dne
+# uz na GitHubu je (druhy beh tentyz den), navaze se na ni, jinak se
+# zalozi z aktualni main.
+git -C "$PRACOVNI" fetch -q origin || varovani "fetch selhal, pokracuji s lokalnim stavem"
+if git -C "$PRACOVNI" rev-parse -q --verify "refs/remotes/origin/$VETEV" >/dev/null; then
+    zaklad="origin/$VETEV"
+else
+    zaklad="origin/main"
+fi
+git -C "$PRACOVNI" checkout -q -B "$VETEV" "$zaklad" \
+    || chyba "nelze prepnout na vetev $VETEV - neni v $PRACOVNI rozpracovana zmena?"
+detail "vetev          $VETEV (z $zaklad)"
+
+# Konfigurace z netbox-dockeru patri do reference/, stejne jako v repozitari.
+# configuration/ v koreni repozitare je konfigurace pro RHEL9 a neprepisuje se.
+CIL_KONFIGURACE="$PRACOVNI/reference/puvodni-netbox-docker"
+mkdir -p "$PRACOVNI/commatrix" "$CIL_KONFIGURACE"
 
 
 # ------------------------------------------------------------------
@@ -159,7 +180,7 @@ do
             varovani "$rel je na seznamu tajnych souboru, preskakuji"
             continue
         fi
-        cp -p "$NETBOXDOCKER/$rel" "$PRACOVNI/netbox-docker/$(basename "$rel")"
+        cp -p "$NETBOXDOCKER/$rel" "$CIL_KONFIGURACE/$(basename "$rel")"
         detail "$rel"
     else
         detail "$rel - neni, preskakuji"
@@ -204,11 +225,12 @@ fi
 # 6. .gitignore
 #
 # Jmenovite, ne pres *.env - jinak by pravidlo zahrnovalo i versions.env.
+# Ne cele env/ - v repozitari jsou v env/ vzory *.example, ktere tam patri.
 # ------------------------------------------------------------------
 
 info "Kontrola .gitignore"
 
-for vzor in $TAJNE_SOUBORY 'env/' '__pycache__/' '*.pyc' 'dump/' '*.swp'; do
+for vzor in $TAJNE_SOUBORY '__pycache__/' '*.pyc' 'dump/' '*.swp'; do
     if ! grep -qxF "$vzor" "$PRACOVNI/.gitignore" 2>/dev/null; then
         printf '%s\n' "$vzor" >> "$PRACOVNI/.gitignore"
         detail "pridano $vzor"
@@ -358,19 +380,23 @@ detail "commit vytvoren: $(git log -1 --format=%h)"
 
 if [ "$PUSH" -eq 0 ]; then
     info "Push preskocen (--bez-push)"
-    detail "odeslat lze pozdeji: git -C $PRACOVNI push"
+    detail "odeslat lze pozdeji: git -C $PRACOVNI push -u origin $VETEV"
     exit 0
 fi
 
 info "Push na GitHub"
-if git push; then
-    detail "hotovo"
+if git push -q -u origin "$VETEV"; then
+    detail "hotovo, vetev $VETEV"
+    WEB="${REPO%.git}"
+    case "$WEB" in https://github.com/*)
+        detail "pull request: $WEB/compare/main...$VETEV?expand=1" ;;
+    esac
 else
     printf '\n'
     varovani "push selhal, commit ale zustal v $PRACOVNI"
     varovani "Nejcastejsi pricina: na tomhle stroji nejsou pristupove udaje k GitHubu."
     varovani "Moznosti:"
-    varovani "  1) git -C $PRACOVNI push  a zadat uzivatele obhichus a osobni token"
+    varovani "  1) git -C $PRACOVNI push -u origin $VETEV  a zadat uzivatele obhichus a osobni token"
     varovani "  2) nainstalovat gh a prihlasit se: gh auth login"
     varovani "  3) odeslat z Windows DC, kde uz gh prihlaseny je"
     exit 1
