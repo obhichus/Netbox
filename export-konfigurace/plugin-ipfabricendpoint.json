@@ -1,0 +1,134 @@
+[
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 1,
+  "fields": {
+    "created": "2026-09-05T11:13:29.567Z",
+    "last_updated": "2026-09-05T11:13:29.568Z",
+    "custom_field_data": {},
+    "name": "Default Sites Endpoint",
+    "description": "",
+    "endpoint": "/inventory/sites/overview"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 2,
+  "fields": {
+    "created": "2026-09-05T11:13:29.569Z",
+    "last_updated": "2026-09-05T11:13:29.569Z",
+    "custom_field_data": {},
+    "name": "Default Devices Endpoint",
+    "description": "",
+    "endpoint": "/inventory/devices"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 3,
+  "fields": {
+    "created": "2026-09-05T11:13:29.569Z",
+    "last_updated": "2026-09-05T11:13:29.569Z",
+    "custom_field_data": {},
+    "name": "Default Stack Members Endpoint",
+    "description": "",
+    "endpoint": "/technology/platforms/stack/members"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 4,
+  "fields": {
+    "created": "2026-09-05T11:13:29.570Z",
+    "last_updated": "2026-09-05T11:13:29.570Z",
+    "custom_field_data": {},
+    "name": "Default VSS Chassis Endpoint",
+    "description": "",
+    "endpoint": "/technology/platforms/vss/chassis"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 5,
+  "fields": {
+    "created": "2026-09-05T11:13:29.570Z",
+    "last_updated": "2026-09-05T11:13:29.570Z",
+    "custom_field_data": {},
+    "name": "Default Interfaces Endpoint",
+    "description": "",
+    "endpoint": "/inventory/interfaces"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 6,
+  "fields": {
+    "created": "2026-09-05T11:13:29.571Z",
+    "last_updated": "2026-09-05T11:13:29.571Z",
+    "custom_field_data": {},
+    "name": "Default Part Numbers Endpoint",
+    "description": "",
+    "endpoint": "/inventory/part-numbers"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 7,
+  "fields": {
+    "created": "2026-09-05T11:13:29.571Z",
+    "last_updated": "2026-09-05T11:13:29.571Z",
+    "custom_field_data": {},
+    "name": "Default VLANs Endpoint",
+    "description": "",
+    "endpoint": "/technology/vlans/site-summary"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 8,
+  "fields": {
+    "created": "2026-09-05T11:13:29.572Z",
+    "last_updated": "2026-09-05T11:13:29.572Z",
+    "custom_field_data": {},
+    "name": "Default VRFs Endpoint",
+    "description": "",
+    "endpoint": "/technology/routing/vrf/detail"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 9,
+  "fields": {
+    "created": "2026-09-05T11:13:29.572Z",
+    "last_updated": "2026-09-05T11:13:29.572Z",
+    "custom_field_data": {},
+    "name": "Default Networks Endpoint",
+    "description": "",
+    "endpoint": "/technology/networks/managed-networks"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 10,
+  "fields": {
+    "created": "2026-09-05T11:13:29.573Z",
+    "last_updated": "2026-09-05T11:13:29.573Z",
+    "custom_field_data": {},
+    "name": "Default Managed IPv4 Endpoint",
+    "description": "",
+    "endpoint": "/technology/addressing/managed-ip/ipv4"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricendpoint",
+  "pk": 11,
+  "fields": {
+    "created": "2026-09-05T11:13:29.573Z",
+    "last_updated": "2026-09-05T11:13:29.573Z",
+    "custom_field_data": {},
+    "name": "Default Managed IPv6 Endpoint",
+    "description": "",
+    "endpoint": "/technology/addressing/managed-ip/ipv6"
+  }
+}
+]

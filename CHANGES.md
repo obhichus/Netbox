@@ -25,6 +25,14 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - `commatrix/matice-z-firewallu.csv` doplněna z Ubuntu PC; `matice-demo2.csv` na PC je shodná s repem
   (záměny slabých zdrojů už obsahuje, opakovaná kontrola neověřena). Export JSON na PC selhal, protože
   `export_konfigurace.py` tam ještě nebyl. Stav: otevřené.
+- Export konfigurace z databáze (2026-10-24) v [export-konfigurace/](export-konfigurace/): 14 transformačních map,
+  43 polí, 11 endpointů, 15 coalesce strategií, filtry, 3 registrované skripty, nástěnka, konfigurační revize.
+  Zkontrolováno: žádná hesla, tokeny ani adresy. Příznak: export obsahoval 12 149 záznamů `IPFabricIngestionIssue`
+  (7,9 MB provozních dat) a naopak vynechal relační mapy. Příčina: `VYNECHAT` v `export_konfigurace.py` měl
+  `ipfabricrelationshipfield` místo `ipfabricingestionissue`. Řešení: opraveno, ingestion issues do repa nejdou.
+  Stav: relační mapy čekají na nový export.
+- `.zaloha-povoleno`: dva prověřené nálezy kontroly 8c (`SECRET_KEY="dummy..."` pro collectstatic v netbox-dockeru).
+- `.gitignore`: `report.csv` (výstup `commatrix_check.py`), `ipf_prehled.csv` (výstup `ipf_discover.py`).
 - Kapitola 11 o záloze: [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md) (s poznámkou, v čem se upravená verze liší).
 - Doklad [commatrix/doklady/ipfabric-dashboard-22443e66.pdf](commatrix/doklady/ipfabric-dashboard-22443e66.pdf):
   dashboard IP Fabricu, proti kterému se ověřily počty po importu.

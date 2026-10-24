@@ -14,3 +14,5 @@ ipf.env
 **/netbox-docker/env/
 fw_prehled.csv
 fw_siroka_pravidla.csv
+report.csv
+ipf_prehled.csv

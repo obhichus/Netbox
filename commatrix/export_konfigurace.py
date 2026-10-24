@@ -15,8 +15,8 @@ Exportuje:
     aktivni konfiguracni revizi
 
 Zamerne NEEXPORTUJE IPFabricSource (obsahuje pristupove udaje),
-IPFabricData, IPFabricSnapshot, IPFabricSync a IPFabricIngestion
-(provozni data, nikoli konfigurace).
+IPFabricData, IPFabricSnapshot, IPFabricSync, IPFabricIngestion
+a IPFabricIngestionIssue (provozni data, nikoli konfigurace).
 """
 
 import json
@@ -34,7 +34,7 @@ VYNECHAT = {
     "ipfabricsnapshot",
     "ipfabricsync",
     "ipfabricingestion",
-    "ipfabricrelationshipfield",
+    "ipfabricingestionissue",
 }
 
 CITLIVE = ("PASSWORD", "SECRET", "TOKEN", "KEY", "CREDENTIAL")

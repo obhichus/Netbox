@@ -1,0 +1,86 @@
+[
+{
+  "model": "ipfabric_netbox.ipfabricfilter",
+  "pk": 1,
+  "fields": {
+    "created": "2026-09-05T11:13:29.821Z",
+    "last_updated": "2026-09-05T11:13:29.821Z",
+    "custom_field_data": {},
+    "name": "Default Devices Filter",
+    "description": null,
+    "filter_type": "and",
+    "endpoints": [
+      2
+    ],
+    "syncs": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricfilter",
+  "pk": 2,
+  "fields": {
+    "created": "2026-09-05T11:13:29.831Z",
+    "last_updated": "2026-09-05T11:13:29.831Z",
+    "custom_field_data": {},
+    "name": "Default Child Devices Filter",
+    "description": null,
+    "filter_type": "and",
+    "endpoints": [
+      3,
+      4,
+      5,
+      8,
+      10
+    ],
+    "syncs": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricfilter",
+  "pk": 3,
+  "fields": {
+    "created": "2026-09-05T11:13:29.838Z",
+    "last_updated": "2026-09-05T11:13:29.838Z",
+    "custom_field_data": {},
+    "name": "Default Part Numbers Filter",
+    "description": null,
+    "filter_type": "and",
+    "endpoints": [
+      6
+    ],
+    "syncs": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricfilter",
+  "pk": 4,
+  "fields": {
+    "created": "2026-09-05T11:13:29.844Z",
+    "last_updated": "2026-09-05T11:13:29.844Z",
+    "custom_field_data": {},
+    "name": "Default VLANs Filter",
+    "description": null,
+    "filter_type": "and",
+    "endpoints": [
+      7
+    ],
+    "syncs": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabricfilter",
+  "pk": 5,
+  "fields": {
+    "created": "2026-09-05T11:13:29.851Z",
+    "last_updated": "2026-09-05T11:13:29.851Z",
+    "custom_field_data": {},
+    "name": "Default Prefix Filter",
+    "description": null,
+    "filter_type": "and",
+    "endpoints": [
+      9
+    ],
+    "syncs": []
+  }
+}
+]

@@ -1,0 +1,432 @@
+[
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 3,
+  "fields": {
+    "transform_map": 1,
+    "source_field": "",
+    "target_field": "cf_ipfabric_source",
+    "template": "{{ object.ingestion.sync.snapshot_data.source.pk if object.ingestion else None }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 2,
+  "fields": {
+    "transform_map": 1,
+    "source_field": "siteName",
+    "target_field": "name",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 1,
+  "fields": {
+    "transform_map": 1,
+    "source_field": "",
+    "target_field": "slug",
+    "template": "{{ object.siteName | slugify }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 4,
+  "fields": {
+    "transform_map": 1,
+    "source_field": "",
+    "target_field": "cf_ipfabric_ingestion",
+    "template": "{{ object.ingestion.pk if object.ingestion else None }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 6,
+  "fields": {
+    "transform_map": 2,
+    "source_field": "vendor",
+    "target_field": "name",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 5,
+  "fields": {
+    "transform_map": 2,
+    "source_field": "",
+    "target_field": "slug",
+    "template": "{{ object.vendor | slugify }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 7,
+  "fields": {
+    "transform_map": 3,
+    "source_field": "",
+    "target_field": "slug",
+    "template": "{% if object.family %}{{ object.family | slugify }}{% else %}{{ object.vendor | slugify }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 8,
+  "fields": {
+    "transform_map": 3,
+    "source_field": "",
+    "target_field": "name",
+    "template": "{% if object.family %}{{ object.family }}{% else %}{{ object.vendor }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 9,
+  "fields": {
+    "transform_map": 4,
+    "source_field": "",
+    "target_field": "slug",
+    "template": "{% if object.model %}{{ object.model | string | slugify }}{% else %}{{ [object.vendor, object.family, object.platform] | select | join('-') | slugify }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 10,
+  "fields": {
+    "transform_map": 4,
+    "source_field": "",
+    "target_field": "model",
+    "template": "{% if object.model %}{{ object.model | string }}{% else %}{{ [object.vendor, object.family, object.platform] | select | join(' ') }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 11,
+  "fields": {
+    "transform_map": 5,
+    "source_field": "",
+    "target_field": "name",
+    "template": "{% if object.master is defined and object.master %}{{ object.master }}{% else %}{{ object.hostname }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 14,
+  "fields": {
+    "transform_map": 6,
+    "source_field": "devType",
+    "target_field": "name",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 12,
+  "fields": {
+    "transform_map": 6,
+    "source_field": "",
+    "target_field": "slug",
+    "template": "{{ object.devType | slugify }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 13,
+  "fields": {
+    "transform_map": 6,
+    "source_field": "",
+    "target_field": "vm_role",
+    "template": "False"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 20,
+  "fields": {
+    "transform_map": 7,
+    "source_field": "",
+    "target_field": "cf_ipfabric_ingestion",
+    "template": "{{ object.ingestion.pk if object.ingestion else None }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 17,
+  "fields": {
+    "transform_map": 7,
+    "source_field": "",
+    "target_field": "vc_position",
+    "template": "{% if object.virtual_chassis %}{% set MEMBER = object.virtual_chassis.member if (object.virtual_chassis.member is defined and object.virtual_chassis.member) else object.virtual_chassis.chassisId %}{% if MEMBER is string and not MEMBER.isdigit() %}{% set LAST = MEMBER.split('-')[-1] %}{% if LAST.isdigit() %}{{ LAST | int }}{% else %}{{ MEMBER }}{% endif %}{% else %}{{ MEMBER }}{% endif %}{% else %}None{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 18,
+  "fields": {
+    "transform_map": 7,
+    "source_field": "",
+    "target_field": "status",
+    "template": "active"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 19,
+  "fields": {
+    "transform_map": 7,
+    "source_field": "",
+    "target_field": "cf_ipfabric_source",
+    "template": "{{ object.ingestion.sync.snapshot_data.source.pk if object.ingestion else None }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 15,
+  "fields": {
+    "transform_map": 7,
+    "source_field": "",
+    "target_field": "name",
+    "template": "{{ object.nb_name }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 16,
+  "fields": {
+    "transform_map": 7,
+    "source_field": "",
+    "target_field": "serial",
+    "template": "{{ object.nb_serial }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 22,
+  "fields": {
+    "transform_map": 8,
+    "source_field": "sn",
+    "target_field": "serial",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 23,
+  "fields": {
+    "transform_map": 8,
+    "source_field": "",
+    "target_field": "name",
+    "template": "{% if object.name %}{{ object.name | string | truncate(64, True) }}{% elif object.dscr %}{{ object.dscr | string | truncate(64, True) }}{% elif object.pid %}{{ (object.pid ~ ' ' ~ (object.sn or '')) | trim | truncate(64, True) }}{% else %}neznama polozka{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 21,
+  "fields": {
+    "transform_map": 8,
+    "source_field": "",
+    "target_field": "part_id",
+    "template": "{% if object.pid and object.pid != \"None\" %}{{ object.pid }}{% else %}unknown{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 32,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "mode",
+    "template": "{% if object.tagged_vlan_ids %}tagged{% else %}None{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 24,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "name",
+    "template": "{% if object.nameOriginal %}{{ object.nameOriginal }}{% else %}{{ object.intName }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 25,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "description",
+    "template": "{% if (object.dscr | lower) != \"none\" %}{{ object.dscr or \"\" }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 26,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "mtu",
+    "template": "{{ object.mtu or 1500 }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 27,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "type",
+    "template": "1000base-t"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 28,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "enabled",
+    "template": "{% if object.l1 == \"up\" %}True{% else %}False{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 29,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "mgmt_only",
+    "template": "{% if object.primaryIp and object.primaryIp == object.loginIp %}True{% else %}False{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 30,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "speed",
+    "template": "{% if not object.speedValue or object.speedValue==\"unknown\" %}None{% else %}{{ object.speedValue|int // 1000 }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 31,
+  "fields": {
+    "transform_map": 9,
+    "source_field": "",
+    "target_field": "duplex",
+    "template": "{% if not object.duplex or object.duplex==\"unknown\" %}None{% else %}{{ object.duplex }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 34,
+  "fields": {
+    "transform_map": 10,
+    "source_field": "",
+    "target_field": "assigned_object_id",
+    "template": "{% set NAME = object.nameOriginal or object.intName %}{{ dcim.Interface.objects.filter(device__serial=object.nb_serial, name=NAME).first().pk }}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 33,
+  "fields": {
+    "transform_map": 10,
+    "source_field": "",
+    "target_field": "mac_address",
+    "template": "{% if object.mac %}{{ object.mac | mac_to_format(frmt=\"MAC_COLON_TWO\") | upper }}{% else %}{{ \"00:00:00:00:00:01\" | mac_to_format(frmt=\"MAC_COLON_TWO\") | upper }}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 37,
+  "fields": {
+    "transform_map": 11,
+    "source_field": "vlanId",
+    "target_field": "vid",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 36,
+  "fields": {
+    "transform_map": 11,
+    "source_field": "",
+    "target_field": "description",
+    "template": "{% if (object.dscr | lower) != \"none\" %}{{ object.dscr or \"\"}}{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 35,
+  "fields": {
+    "transform_map": 11,
+    "source_field": "",
+    "target_field": "name",
+    "template": "{% if object.vlanName is defined and object.vlanName | lower not in [\"none\", \"\"] %}{{ object.vlanName | string | truncate(64, True) }}{% else %}\"\"{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 39,
+  "fields": {
+    "transform_map": 12,
+    "source_field": "rd",
+    "target_field": "rd",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 38,
+  "fields": {
+    "transform_map": 12,
+    "source_field": "vrf",
+    "target_field": "name",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 41,
+  "fields": {
+    "transform_map": 13,
+    "source_field": "",
+    "target_field": "scope_id",
+    "template": "{% if object.siteName is defined %}{% set SLUG = object.siteName | slugify %}\n{{ dcim.Site.objects.get(slug=SLUG).pk }}{% else %}None{% endif %}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 40,
+  "fields": {
+    "transform_map": 13,
+    "source_field": "net",
+    "target_field": "prefix",
+    "template": ""
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 43,
+  "fields": {
+    "transform_map": 14,
+    "source_field": "",
+    "target_field": "address",
+    "template": "{% if object.net %}{% set MASK = object.net.split('/')[1] %}{% elif ':' in object.ip %}{% set MASK = 64 %}{% else %}{% set MASK = 32 %}{% endif %}{{ object.ip }}/{{MASK}}"
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformfield",
+  "pk": 42,
+  "fields": {
+    "transform_map": 14,
+    "source_field": "",
+    "target_field": "assigned_object_id",
+    "template": "{% set NAME = object.nameOriginal or object.intName %}{% set SN = object.nb_serial or object.sn %}{{ dcim.Interface.objects.filter(device__serial=SN, name=NAME).first().pk }}"
+  }
+}
+]

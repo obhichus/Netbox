@@ -1,0 +1,233 @@
+[
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 1,
+  "fields": {
+    "created": "2026-09-05T11:13:30.075Z",
+    "last_updated": "2026-09-05T11:13:30.075Z",
+    "custom_field_data": {},
+    "name": "Site Transform Map",
+    "source_endpoint": 1,
+    "target_model": 6,
+    "group": null,
+    "parents": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 2,
+  "fields": {
+    "created": "2026-09-05T11:13:30.081Z",
+    "last_updated": "2026-09-05T11:13:30.081Z",
+    "custom_field_data": {},
+    "name": "Manufacturer Transform Map",
+    "source_endpoint": 2,
+    "target_model": 16,
+    "group": null,
+    "parents": [
+      1
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 3,
+  "fields": {
+    "created": "2026-09-05T11:13:30.086Z",
+    "last_updated": "2026-09-05T11:13:30.086Z",
+    "custom_field_data": {},
+    "name": "Platform Transform Map",
+    "source_endpoint": 2,
+    "target_model": 17,
+    "group": null,
+    "parents": [
+      2
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 4,
+  "fields": {
+    "created": "2026-09-05T11:13:30.091Z",
+    "last_updated": "2026-09-05T11:13:30.091Z",
+    "custom_field_data": {},
+    "name": "Device Type Transform Map",
+    "source_endpoint": 2,
+    "target_model": 18,
+    "group": null,
+    "parents": [
+      2
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 5,
+  "fields": {
+    "created": "2026-09-05T11:13:30.096Z",
+    "last_updated": "2026-09-05T11:13:30.096Z",
+    "custom_field_data": {},
+    "name": "Virtual Chassis Transform Map",
+    "source_endpoint": 3,
+    "target_model": 19,
+    "group": null,
+    "parents": [
+      3,
+      4,
+      6
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 6,
+  "fields": {
+    "created": "2026-09-05T11:13:30.101Z",
+    "last_updated": "2026-09-05T11:13:30.101Z",
+    "custom_field_data": {},
+    "name": "Device Role Transform Map",
+    "source_endpoint": 2,
+    "target_model": 20,
+    "group": null,
+    "parents": [
+      1
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 7,
+  "fields": {
+    "created": "2026-09-05T11:13:30.103Z",
+    "last_updated": "2026-09-05T11:13:30.103Z",
+    "custom_field_data": {},
+    "name": "Device Transform Map",
+    "source_endpoint": 2,
+    "target_model": 11,
+    "group": null,
+    "parents": [
+      1,
+      3,
+      4,
+      5,
+      6
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 8,
+  "fields": {
+    "created": "2026-09-05T11:13:30.114Z",
+    "last_updated": "2026-09-05T11:13:30.114Z",
+    "custom_field_data": {},
+    "name": "Inventory Transform Map",
+    "source_endpoint": 6,
+    "target_model": 22,
+    "group": null,
+    "parents": [
+      2,
+      7
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 9,
+  "fields": {
+    "created": "2026-09-05T11:13:30.118Z",
+    "last_updated": "2026-09-05T11:13:30.118Z",
+    "custom_field_data": {},
+    "name": "Interface Transform Map",
+    "source_endpoint": 5,
+    "target_model": 7,
+    "group": null,
+    "parents": [
+      7,
+      11
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 10,
+  "fields": {
+    "created": "2026-09-05T11:13:30.126Z",
+    "last_updated": "2026-09-05T11:13:30.126Z",
+    "custom_field_data": {},
+    "name": "MAC Address Transform Map",
+    "source_endpoint": 5,
+    "target_model": 23,
+    "group": null,
+    "parents": [
+      9
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 11,
+  "fields": {
+    "created": "2026-09-05T11:13:30.133Z",
+    "last_updated": "2026-09-05T11:13:30.133Z",
+    "custom_field_data": {},
+    "name": "VLAN Transform Map",
+    "source_endpoint": 7,
+    "target_model": 25,
+    "group": null,
+    "parents": [
+      1
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 12,
+  "fields": {
+    "created": "2026-09-05T11:13:30.138Z",
+    "last_updated": "2026-09-05T11:13:30.138Z",
+    "custom_field_data": {},
+    "name": "VRF Transform Map",
+    "source_endpoint": 8,
+    "target_model": 26,
+    "group": null,
+    "parents": [
+      1
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 13,
+  "fields": {
+    "created": "2026-09-05T11:13:30.142Z",
+    "last_updated": "2026-09-05T11:13:30.142Z",
+    "custom_field_data": {},
+    "name": "Prefix Transform Map",
+    "source_endpoint": 9,
+    "target_model": 27,
+    "group": null,
+    "parents": [
+      12
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabrictransformmap",
+  "pk": 14,
+  "fields": {
+    "created": "2026-09-05T11:13:30.145Z",
+    "last_updated": "2026-09-05T11:13:30.145Z",
+    "custom_field_data": {},
+    "name": "IP Address Transform Map",
+    "source_endpoint": 10,
+    "target_model": 21,
+    "group": null,
+    "parents": [
+      9,
+      12
+    ]
+  }
+}
+]

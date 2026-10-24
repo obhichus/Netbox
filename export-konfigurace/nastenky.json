@@ -1,0 +1,51 @@
+[
+  {
+    "uzivatel": "admin",
+    "layout": [
+      {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 0,
+        "id": "01c6c618-bc78-4ed3-ae5c-bdafc5708ee1"
+      },
+      {
+        "h": 5,
+        "w": 12,
+        "x": null,
+        "y": null,
+        "id": "48614eb9-e227-4cd7-b6a9-0d69455e75c4"
+      }
+    ],
+    "config": {
+      "01c6c618-bc78-4ed3-ae5c-bdafc5708ee1": {
+        "class": "extras.ObjectCountsWidget",
+        "color": "indigo",
+        "title": "Síť naimportovaná z IP Fabricu",
+        "config": {
+          "models": [
+            "dcim.device",
+            "dcim.devicetype",
+            "dcim.interface",
+            "dcim.site",
+            "ipam.ipaddress",
+            "ipam.prefix",
+            "ipam.vlan",
+            "ipam.vrf"
+          ],
+          "filters": null
+        }
+      },
+      "48614eb9-e227-4cd7-b6a9-0d69455e75c4": {
+        "class": "extras.ObjectListWidget",
+        "color": "pink",
+        "title": "Historie importů a kontrol komunikační matice",
+        "config": {
+          "model": "core.job",
+          "page_size": 8,
+          "url_params": null
+        }
+      }
+    }
+  }
+]

@@ -50,8 +50,8 @@ Podrobně: [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (kap. 9, postup import
 
 Transformační mapy, registrace NetBox Scriptů, rozložení nástěnek a konfigurační revize nejsou v žádném
 souboru, žijí jen v databázi NetBoxu. Text map v kap. 9.6 je dokumentace, ne záloha. Zálohu dělá
-[commatrix/export_konfigurace.py](commatrix/export_konfigurace.py) a výsledné JSONy patří do
-`export-konfigurace/` (adresář vznikne až exportem). Dokud tam nejsou, obnova od nuly není úplná.
+[commatrix/export_konfigurace.py](commatrix/export_konfigurace.py) a výsledné JSONy jsou v
+[export-konfigurace/](export-konfigurace/) (export z 2026-10-24; chybí relační mapy, viz níže).
 Na původním stroji zálohu do gitu (zdrojáky, konfigurace, export, kontrola úniku hesel) dělá
 [commatrix/zaloha_na_git.sh](commatrix/zaloha_na_git.sh) (kap. 11, [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md)). Commituje do větve `zaloha-<datum>` (main je
 chráněný) a vypíše odkaz na pull request; konfiguraci z netbox-dockeru ukládá do
@@ -70,9 +70,9 @@ chráněný) a vypíše odkaz na pull request; konfiguraci z netbox-dockeru ukl�
 - Neimportují se tabulky sousedů a linků (bez nich nelze kreslit topologii).
 - Nenamapovaný endpoint `managed-networks`: neimportovaných 104 hostů a 120 hraničních rozhraní.
 - **V repu zatím chybí** (Roman nemá přístup k Ubuntu stroji blue-ThinkCentre-M710s, doplní se až ho mít
-  bude, nejlépe během `commatrix/zaloha_na_git.sh`): JSONy z `export_konfigurace.py` (první pokus
-  2026-10-24 selhal, skript na PC ještě nebyl). `matice-z-firewallu.csv` a `matice-demo2.csv` už v repu jsou.
-  Zda jsou skripty
+  bude, nejlépe během `commatrix/zaloha_na_git.sh`): relační mapy (`ipfabricrelationshipfield`, např.
+  „Interface, relace na device“) – první export 2026-10-24 je vynechal, skript je opravený, stačí export
+  zopakovat; dále `commatrix/conmantrix_discovery.py`, který na PC je a v repu ne. Zda jsou skripty
   v `commatrix/` poslední verze, není ověřeno (kontrolní součty: `sha256sum` proti `/opt/commatrix`).
 
 ## Co do repa nesmí

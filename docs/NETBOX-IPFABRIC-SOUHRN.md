@@ -4,6 +4,7 @@
 > je [commatrix/export_konfigurace.py](../commatrix/export_konfigurace.py), podrobný postup importu
 > v [IMPORT-RUTINA.md](IMPORT-RUTINA.md) a pasti v [ZNAME-PASTI.md](ZNAME-PASTI.md).
 > Příloha A proto v repu není potřeba (zdrojáky se do dokumentu nekopírují, jsou vedle).
+> Kód v 6.5 je původní verze; v repu je opravená (vynechává `ipfabricingestionissue`, exportuje relační mapy).
 
 Zdroj pravdy o síti pro potřeby kybernetické bezpečnosti, postavený
 na NetBoxu, plněný daty z IP Fabric a doplněný o kontrolu komunikační
