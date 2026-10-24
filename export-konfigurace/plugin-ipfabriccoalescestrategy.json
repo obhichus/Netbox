@@ -1,0 +1,232 @@
+[
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 1,
+  "fields": {
+    "transform_map": 1,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      1
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 2,
+  "fields": {
+    "transform_map": 2,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      5
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 3,
+  "fields": {
+    "transform_map": 3,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      7
+    ],
+    "relationship_maps": [
+      1
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 4,
+  "fields": {
+    "transform_map": 4,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      9
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 5,
+  "fields": {
+    "transform_map": 5,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      11
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 6,
+  "fields": {
+    "transform_map": 6,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      12,
+      13
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 7,
+  "fields": {
+    "transform_map": 7,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      16
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 8,
+  "fields": {
+    "transform_map": 8,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      22,
+      23
+    ],
+    "relationship_maps": [
+      10
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 9,
+  "fields": {
+    "transform_map": 9,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      24
+    ],
+    "relationship_maps": [
+      12
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 10,
+  "fields": {
+    "transform_map": 10,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      33,
+      34
+    ],
+    "relationship_maps": [
+      13
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 11,
+  "fields": {
+    "transform_map": 11,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      37
+    ],
+    "relationship_maps": [
+      14
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 12,
+  "fields": {
+    "transform_map": 12,
+    "name": "By RD",
+    "priority": 0,
+    "condition": "{% if object.rd %}{{ ipam.VRF.objects.using(connection_name).filter(rd=object.rd).exists() }}{% endif %}",
+    "field_maps": [
+      39
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 13,
+  "fields": {
+    "transform_map": 12,
+    "name": "Default",
+    "priority": 10,
+    "condition": "",
+    "field_maps": [
+      38,
+      39
+    ],
+    "relationship_maps": []
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 14,
+  "fields": {
+    "transform_map": 13,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      40,
+      41
+    ],
+    "relationship_maps": [
+      15,
+      16
+    ]
+  }
+},
+{
+  "model": "ipfabric_netbox.ipfabriccoalescestrategy",
+  "pk": 15,
+  "fields": {
+    "transform_map": 14,
+    "name": "Default",
+    "priority": 0,
+    "condition": "",
+    "field_maps": [
+      43
+    ],
+    "relationship_maps": [
+      18
+    ]
+  }
+}
+]

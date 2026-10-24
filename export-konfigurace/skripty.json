@@ -1,0 +1,23 @@
+[
+  {
+    "file_root": "scripts",
+    "file_path": "commatrix_script.py",
+    "skripty": [
+      "KontrolaKomunikacniMatice"
+    ]
+  },
+  {
+    "file_root": "scripts",
+    "file_path": "commatrix_v2.py",
+    "skripty": [
+      "KontrolaKomunikacniMaticeV2"
+    ]
+  },
+  {
+    "file_root": "scripts",
+    "file_path": "fw_prehled_script.py",
+    "skripty": [
+      "PrehledFirewallovychPravidel"
+    ]
+  }
+]

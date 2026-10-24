@@ -7,3 +7,12 @@ env/*.conf
 build/.build-ca.crt
 build/.Containerfile.ca
 __pycache__/
+
+# přístupy a generované výstupy z /opt/commatrix a /opt/netbox-docker (nikdy do historie)
+ipf.env
+**/ipf.env
+**/netbox-docker/env/
+fw_prehled.csv
+fw_siroka_pravidla.csv
+report.csv
+ipf_prehled.csv

@@ -1,0 +1,6 @@
+name,src,dst,proto,port,expected
+pls-vnet · nsg1/inbound · pravidlo ssh,88.212.17.181,10.193.20.129,tcp,22,allow
+L66JFW9 · wan@HOST123 · pravidlo permitSSH,10.47.117.1,10.66.123.1,tcp,22,allow
+L66JFW9 · wan@HOST124 · pravidlo permitWWW,10.38.116.1,10.66.124.1,tcp,80,allow
+L66JFW9 · wan@HOST126 · pravidlo allowSSH,10.38.115.110,10.66.126.1,tcp,22,allow
+L66JFW9 · HYPER-WAN@HYPER-WAN · pravidlo BOGONS,192.168.0.1,172.16.0.1,tcp,49,deny

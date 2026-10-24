@@ -16,6 +16,11 @@ Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/
 |---|---|
 | [docs/INSTALACE-RHEL9.md](docs/INSTALACE-RHEL9.md) | kuchařka instalace: co nainstalovat, co kam zkopírovat, co spustit pod rootem |
 | [docs/PROJEKT.md](docs/PROJEKT.md) | o čem projekt je, proč a co má přinést |
+| [docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md) | souhrn projektu: proč, prostředí, co se řešilo, čeho se dosáhlo, co zbývá |
+| [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) | postup importu z IP Fabricu krok za krokem, transformační mapy, kontrola po importu |
+| [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md) | záloha zdrojáků, konfigurace a exportu z původního stroje do gitu (`zaloha_na_git.sh`) |
+| [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md) | známé pasti importu a skriptů a podle čeho je poznat |
+| [CLAUDE.md](CLAUDE.md) | souhrn klíčových pravidel pro Clauda a další, kdo v repu pracují |
 | [docs/opensource-misto-ipfabric.md](docs/opensource-misto-ipfabric.md) | dá se IP Fabric nahradit open-source nástroji? srovnání, škálování, TCO, pilot |
 | [docs/prezentace-vedeni/](docs/prezentace-vedeni/) | prezentace pro vedení SŽ (`netbox-sz-vedeni.pptx`, 18 slajdů) |
 | [docs/prezentace/](docs/prezentace/) | prezentace „Komunikační matice v NetBoxu“ (otevřít `prezentace.html`) |
@@ -180,6 +185,25 @@ Ekvivalenty příkazů z původní dokumentace (`docker compose …` v `/opt/net
 | `docker compose cp X netbox:/opt/netbox/netbox/scripts/` (do netbox i worker) | `deploy/install-commatrix.sh` (svazek je společný) |
 | `docker compose restart netbox netbox-worker` | `systemctl restart netbox netbox-worker` |
 | `docker compose ps` | `podman ps` |
+
+## Import z IP Fabricu: pořadí skriptů
+
+Pořadí je závazné, každý krok pracuje s výsledkem předchozího. Podrobně v
+[docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md), chyby a jejich podpis v [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md).
+
+| | Krok | Co dělá |
+|---|---|---|
+| 1 | `commatrix/push_ipf_data.py` | stáhne tabulky z IP Fabric API (nebo z dumpu) do pluginu jako `IPFabricData`, dopočítá `nb_serial`/`nb_name` |
+| 2 | ingestion (IP Fabric → Sources → Sync) | plugin z dat založí objekty NetBoxu ve větvi; merge přes `enqueue_merge_job` nebo `auto_merge` |
+| 3 | `commatrix/primarni_ip.py` | doplní `primary_ip4` zařízení |
+| 4 | `commatrix/prefixy.py` | založí prefixy ze sloupce `net` |
+| 5 | kontrola po importu | počty proti dashboardu IP Fabricu (kap. 9.7) |
+
+Pak kontrola matice (`commatrix_script.py` / `commatrix_check.py`) a přehled firewallů
+(`fw_discover.py` → `fw_prehled.py`, `fw_na_matici.py`), viz [commatrix/README.md](commatrix/README.md).
+Po změně map, skriptů nebo nastavení spustit `commatrix/export_konfigurace.py` a JSONy commitnout
+do `export-konfigurace/`. Na původním Ubuntu stroji to celé (zdrojáky, konfigurace, export, kontrola
+úniku hesel, commit) dělá `commatrix/zaloha_na_git.sh`, viz [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md).
 
 ## Offline a IP Fabric
 

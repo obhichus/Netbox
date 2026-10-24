@@ -17,8 +17,10 @@ Sprava - telnet na L35 je zakazan,10.39.255.1,10.35.255.194,tcp,23,deny
 | Soubor | Pro |
 |---|---|
 | `matice-demo.csv` | první demo snímek `8dc4dd8b-afc0-46ae-995c-38800e1df781` (36 řádků) |
-| `matice-demo2.csv` | druhý demo snímek `22443e66-2430-4a55-b953-d7601b3f5148` (40 řádků) |
+| `matice-demo2.csv` | druhý demo snímek `22443e66-2430-4a55-b953-d7601b3f5148` (40 řádků). Opakovaná kontrola po záměně slabých zdrojů neověřena, viz [CLAUDE.md](../CLAUDE.md) |
+| `matice-z-firewallu.csv` | kandidátní matice odvozená z pravidel firewallů (výstup `fw_na_matici.py`) |
 | `matrix-vzor.csv` | vzor formátu |
+| `doklady/ipfabric-dashboard-22443e66.pdf` | dashboard IP Fabricu ke snímku 22443e66 (referenční počty pro kontrolu importu) |
 
 Matice je vázaná na snímek: adresy v ní musí v kontrolovaném snímku existovat.
 
@@ -34,7 +36,7 @@ Nahrává a registruje je `deploy/install-commatrix.sh` (spustit po každé změ
 |---|---|
 | `commatrix_v2.py` | **Kontrola komunikační matice — v2**: verdikty s odkazy na zařízení, souhrn podle závažnosti, CSV výstup. Pole `cesta` = soubor v kontejneru, např. `/opt/netbox/netbox/scripts/matice-demo2.csv` |
 | `commatrix_script.py` | první verze kontroly (bez odkazů na zařízení) |
-| `fw_prehled_script.py` | **Přehled firewallových pravidel**: široká povolení k revizi, přehled po prvcích |
+| `fw_prehled_script.py` | **Přehled firewallových pravidel**: široká povolení k revizi, přehled po prvcích. Celý běh z nástěnky zatím neověřen |
 
 Čtou `IPF_URL`, `IPF_USER`, `IPF_PASS`, `IPF_SNAPSHOT` z `/opt/netbox-offline/env/netbox.env`.
 
@@ -47,6 +49,7 @@ Spouští se přes `deploy/nb-shell.sh` (náhrada `docker compose exec -T netbox
 | `push_ipf_data.py` | stáhne 11 tabulek snímku z IP Fabric API a vloží je do pluginu (zdroj v režimu *remote*); pak se spustí ingesce |
 | `primarni_ip.py` | nastaví zařízením primární IP |
 | `prefixy.py` | založí prefixy z naimportovaných adres |
+| `export_konfigurace.py` | export konfigurace, která je jen v databázi (mapy, skripty, nástěnky, revize) do JSON (adresář `export-konfigurace/` v kořeni repa), viz [Záloha do gitu](#záloha-do-gitu) |
 
 ```bash
 # import snímku z IP Fabricu
@@ -101,3 +104,18 @@ Ve výpisu má být `Ctu ulozeny snapshot z …`. Pozor: kontrola matice (simula
 | `fw_prehled.py` | přehled kvality pravidel do CSV |
 
 `provoz-netbox-ipfabric.txt` je textová verze provozní dokumentace.
+
+## Záloha do gitu
+
+`zaloha_na_git.sh` (Romanův skript pro původní Ubuntu stroj) zkopíruje skripty a data z `/opt/commatrix`
+(`*.py *.csv *.txt *.md *.sh`, nikdy `ipf.env` ani `dump/`), vybrané soubory z `/opt/netbox-docker`
+(bez `env/`) do `reference/puvodni-netbox-docker/`, spustí `export_konfigurace.py` a vyzvedne JSONy do
+`export-konfigurace/`. Commituje do větve `zaloha-<datum>` (main je chráněný) a vypíše odkaz na pull request. Před commitem
+zkontroluje, že se nepřidává tajný soubor ani hodnota hesla z `ipf.env` nebo heslo zapsané v kódu
+(výjimky do `.zaloha-povoleno`). Volby `--bez-push`, `--bez-exportu`, `--zprava "text"`. Podrobně
+v [docs/ZALOHA-NA-GIT.md](../docs/ZALOHA-NA-GIT.md) (kap. 11). Doklady (`doklady/*.pdf`) se zálohují taky.
+
+`export_konfigurace.py` exportuje konfiguraci, která je jen v databázi: transformační mapy pluginu,
+registrace NetBox Scriptů, nástěnky a aktivní konfigurační revizi. Záměrně vynechává `IPFabricSource`
+(přístupové údaje), provozní data pluginu a klíče revize s PASSWORD/SECRET/TOKEN/KEY/CREDENTIAL.
+Na RHEL9: `deploy/nb-shell.sh /opt/commatrix/export_konfigurace.py`.

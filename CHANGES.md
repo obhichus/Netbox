@@ -4,6 +4,42 @@ Historie změn a všech problémů, které se při stavbě a provozu řešily. N
 Každý problém má **Příznak / Příčina / Řešení / Stav** (vyřešeno · obejito · otevřené).
 Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
+## 2026-10-24: import z IP Fabricu a známé pasti
+
+- Z dřívější pracovní relace převzaty kapitoly 9 a 10:
+  [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (pořadí kroků importu, offline režim, transformační mapy,
+  které jsou jen v databázi, referenční počty, retence) a [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md)
+  (14 pastí s příznakem, příčinou a řešením: `serial` NULL, `nb_serial`/`nb_name`, duplikace VRF,
+  `IPAddressPrimaryRemovalError`, sync visící v Ready to merge, timeout RQ, IPv6 prefixy, falešná
+  porušení matice, NetBox Scripty, `ConfigRevision`, heslo v `ipf.env`, co NetBox neumí). Stav: vyřešeno.
+- Nový [CLAUDE.md](CLAUDE.md) se souhrnem pravidel, odkazy v README.
+- `commatrix/export_konfigurace.py` (od Romana): export konfigurace, která je jen v databázi (mapy,
+  skripty, nástěnky, revize) do JSON; adresář `export-konfigurace/`. Stav: otevřené,
+  JSONy zatím nejsou v repu.
+- [docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md): Romanův souhrn projektu. Nedodělky z jeho
+  části 9 (Journal Entries, sousedé a linky, `managed-networks`) přeneseny do CLAUDE.md. Stav: otevřené.
+- `commatrix/zaloha_na_git.sh` (od Romana): záloha zdrojáků, konfigurace a exportu z původního stroje do gitu
+  s kontrolou úniku hesel. Upraveno: commit do větve `zaloha-<datum>` místo chráněného `main` (push do main
+  by byl odmítnut), konfigurace do `reference/puvodni-netbox-docker/` místo nové složky `netbox-docker/`,
+  do `.gitignore` nepřidává celé `env/` (v repu jsou `env/*.example`). Zálohuje i `doklady/*.pdf`. Vyzkoušeno nanečisto. Stav: vyřešeno.
+- `commatrix/matice-z-firewallu.csv` doplněna z Ubuntu PC; `matice-demo2.csv` na PC je shodná s repem
+  (záměny slabých zdrojů už obsahuje, opakovaná kontrola neověřena). Export JSON na PC selhal, protože
+  `export_konfigurace.py` tam ještě nebyl. Stav: otevřené.
+- Export konfigurace z databáze (2026-10-24) v [export-konfigurace/](export-konfigurace/): 14 transformačních map,
+  43 polí, 11 endpointů, 15 coalesce strategií, filtry, 3 registrované skripty, nástěnka, konfigurační revize.
+  Zkontrolováno: žádná hesla, tokeny ani adresy. Příznak: export obsahoval 12 149 záznamů `IPFabricIngestionIssue`
+  (7,9 MB provozních dat) a naopak vynechal relační mapy. Příčina: `VYNECHAT` v `export_konfigurace.py` měl
+  `ipfabricrelationshipfield` místo `ipfabricingestionissue`. Řešení: opraveno, ingestion issues do repa nejdou.
+  Stav: relační mapy čekají na nový export.
+- `.zaloha-povoleno`: dva prověřené nálezy kontroly 8c (`SECRET_KEY="dummy..."` pro collectstatic v netbox-dockeru).
+- `.gitignore`: `report.csv` (výstup `commatrix_check.py`), `ipf_prehled.csv` (výstup `ipf_discover.py`).
+- Kapitola 11 o záloze: [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md) (s poznámkou, v čem se upravená verze liší).
+- Doklad [commatrix/doklady/ipfabric-dashboard-22443e66.pdf](commatrix/doklady/ipfabric-dashboard-22443e66.pdf):
+  dashboard IP Fabricu, proti kterému se ověřily počty po importu.
+- `.gitignore`: `ipf.env`, `netbox-docker/env/`, `fw_prehled.csv`, `fw_siroka_pravidla.csv`.
+- README: pořadí skriptů importu. CLAUDE.md: dvě nedodělané věci (slabé zdroje v `matice-demo2.csv`,
+  neověřený celý běh `fw_prehled_script.py`). Stav: otevřené.
+
 ## 2026-10-12: jedna větev
 
 - Do `main` sloučena větev s rozborem open-source náhrady IP Fabricu
