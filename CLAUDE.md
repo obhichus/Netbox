@@ -68,6 +68,10 @@ chráněný) a vypíše odkaz na pull request; konfiguraci z netbox-dockeru ukl�
 - Nálezy matice se neukládají jako Journal Entries, takže je nelze vypsat widgetem na nástěnce.
 - Neimportují se tabulky sousedů a linků (bez nich nelze kreslit topologii).
 - Nenamapovaný endpoint `managed-networks`: neimportovaných 104 hostů a 120 hraničních rozhraní.
+- **V repu zatím chybí** (Roman nemá přístup k Ubuntu stroji blue-ThinkCentre-M710s, doplní se až ho mít
+  bude, nejlépe během `commatrix/zaloha_na_git.sh`): JSONy z `export_konfigurace.py`, `matice-z-firewallu.csv`
+  a aktuální verze `matice-demo2.csv` (v repu je starší, bez řádků z bodu výše). Zda jsou skripty
+  v `commatrix/` poslední verze, není ověřeno (kontrolní součty: `sha256sum` proti `/opt/commatrix`).
 
 ## Co do repa nesmí
 
