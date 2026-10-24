@@ -18,6 +18,7 @@ Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/
 | [docs/PROJEKT.md](docs/PROJEKT.md) | o čem projekt je, proč a co má přinést |
 | [docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md) | souhrn projektu: proč, prostředí, co se řešilo, čeho se dosáhlo, co zbývá |
 | [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) | postup importu z IP Fabricu krok za krokem, transformační mapy, kontrola po importu |
+| [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md) | záloha zdrojáků, konfigurace a exportu z původního stroje do gitu (`zaloha_na_git.sh`) |
 | [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md) | známé pasti importu a skriptů a podle čeho je poznat |
 | [CLAUDE.md](CLAUDE.md) | souhrn klíčových pravidel pro Clauda a další, kdo v repu pracují |
 | [docs/opensource-misto-ipfabric.md](docs/opensource-misto-ipfabric.md) | dá se IP Fabric nahradit open-source nástroji? srovnání, škálování, TCO, pilot |
@@ -202,7 +203,7 @@ Pak kontrola matice (`commatrix_script.py` / `commatrix_check.py`) a přehled fi
 (`fw_discover.py` → `fw_prehled.py`, `fw_na_matici.py`), viz [commatrix/README.md](commatrix/README.md).
 Po změně map, skriptů nebo nastavení spustit `commatrix/export_konfigurace.py` a JSONy commitnout
 do `export-konfigurace/`. Na původním Ubuntu stroji to celé (zdrojáky, konfigurace, export, kontrola
-úniku hesel, commit) dělá `commatrix/zaloha_na_git.sh`, viz [commatrix/README.md](commatrix/README.md#záloha-do-gitu).
+úniku hesel, commit) dělá `commatrix/zaloha_na_git.sh`, viz [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md).
 
 ## Offline a IP Fabric
 

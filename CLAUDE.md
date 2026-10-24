@@ -41,6 +41,8 @@ Podrobně: [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (kap. 9, postup import
   nepojmenovávej tak, aby překryly metody `Script` (např. `_log`).
 - **Kontrola matice:** jako zdroj ber IP switche, ne firewallu. „hopu 1/2“ + `FORWARDING(1)` ve
   výstupu simulace znamená chybnou zdrojovou adresu, ne chybu v pravidlech.
+- **Důkaz, že import sedí:** [commatrix/doklady/ipfabric-dashboard-22443e66.pdf](commatrix/doklady/ipfabric-dashboard-22443e66.pdf)
+  (dashboard IP Fabricu ke snímku 22443e66: 365 zařízení, 2608/4618 rozhraní, 104 hostů, 120 hraničních rozhraní).
 - **Srovnání s IP Fabricem:** srovnávej zařízení (365), rozhraní (4618), lokality (21). Aktivní rozhraní
   (2608 vs. 2738) nesrovnávej, měří jinou věc.
 
@@ -51,7 +53,7 @@ souboru, žijí jen v databázi NetBoxu. Text map v kap. 9.6 je dokumentace, ne 
 [commatrix/export_konfigurace.py](commatrix/export_konfigurace.py) a výsledné JSONy patří do
 `export-konfigurace/` (adresář vznikne až exportem). Dokud tam nejsou, obnova od nuly není úplná.
 Na původním stroji zálohu do gitu (zdrojáky, konfigurace, export, kontrola úniku hesel) dělá
-[commatrix/zaloha_na_git.sh](commatrix/zaloha_na_git.sh). Commituje do větve `zaloha-<datum>` (main je
+[commatrix/zaloha_na_git.sh](commatrix/zaloha_na_git.sh) (kap. 11, [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md)). Commituje do větve `zaloha-<datum>` (main je
 chráněný) a vypíše odkaz na pull request; konfiguraci z netbox-dockeru ukládá do
 `reference/puvodni-netbox-docker/`, `configuration/` (konfigurace pro RHEL9) nepřepisuje.
 

@@ -159,6 +159,16 @@ for pripona in py csv txt md sh; do
     done
 done
 [ "$pocet" -gt 0 ] || chyba "v $COMMATRIX se nenasel zadny zdrojak"
+
+# Doklady (PDF, napr. dashboard IP Fabric k referencnimu snimku) jen ze
+# slozky doklady/, ne vsechna PDF ze slozky.
+for soubor in "$COMMATRIX"/doklady/*.pdf; do
+    [ -f "$soubor" ] || continue
+    mkdir -p "$PRACOVNI/commatrix/doklady"
+    cp -p "$soubor" "$PRACOVNI/commatrix/doklady/"
+    detail "doklady/$(basename "$soubor")"
+    pocet=$((pocet + 1))
+done
 detail "celkem $pocet souboru"
 
 

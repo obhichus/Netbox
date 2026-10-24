@@ -21,7 +21,10 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 - `commatrix/zaloha_na_git.sh` (od Romana): záloha zdrojáků, konfigurace a exportu z původního stroje do gitu
   s kontrolou úniku hesel. Upraveno: commit do větve `zaloha-<datum>` místo chráněného `main` (push do main
   by byl odmítnut), konfigurace do `reference/puvodni-netbox-docker/` místo nové složky `netbox-docker/`,
-  do `.gitignore` nepřidává celé `env/` (v repu jsou `env/*.example`). Vyzkoušeno nanečisto. Stav: vyřešeno.
+  do `.gitignore` nepřidává celé `env/` (v repu jsou `env/*.example`). Zálohuje i `doklady/*.pdf`. Vyzkoušeno nanečisto. Stav: vyřešeno.
+- Kapitola 11 o záloze: [docs/ZALOHA-NA-GIT.md](docs/ZALOHA-NA-GIT.md) (s poznámkou, v čem se upravená verze liší).
+- Doklad [commatrix/doklady/ipfabric-dashboard-22443e66.pdf](commatrix/doklady/ipfabric-dashboard-22443e66.pdf):
+  dashboard IP Fabricu, proti kterému se ověřily počty po importu.
 - `.gitignore`: `ipf.env`, `netbox-docker/env/`, `fw_prehled.csv`, `fw_siroka_pravidla.csv`.
 - README: pořadí skriptů importu. CLAUDE.md: dvě nedodělané věci (slabé zdroje v `matice-demo2.csv`,
   neověřený celý běh `fw_prehled_script.py`). Stav: otevřené.
