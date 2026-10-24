@@ -4,6 +4,16 @@ Historie změn a všech problémů, které se při stavbě a provozu řešily. N
 Každý problém má **Příznak / Příčina / Řešení / Stav** (vyřešeno · obejito · otevřené).
 Hesla, tokeny a adresy strojů jsou záměrně vynechány.
 
+## 2026-10-24: import z IP Fabricu a známé pasti
+
+- Z dřívější pracovní relace převzaty kapitoly 9 a 10:
+  [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (pořadí kroků importu, offline režim, transformační mapy,
+  které jsou jen v databázi, referenční počty, retence) a [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md)
+  (14 pastí s příznakem, příčinou a řešením: `serial` NULL, `nb_serial`/`nb_name`, duplikace VRF,
+  `IPAddressPrimaryRemovalError`, sync visící v Ready to merge, timeout RQ, IPv6 prefixy, falešná
+  porušení matice, NetBox Scripty, `ConfigRevision`, heslo v `ipf.env`, co NetBox neumí). Stav: vyřešeno.
+- Nový [CLAUDE.md](CLAUDE.md) se souhrnem pravidel, odkazy v README.
+
 ## 2026-10-12: jedna větev
 
 - Do `main` sloučena větev s rozborem open-source náhrady IP Fabricu
