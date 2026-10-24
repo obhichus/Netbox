@@ -12,9 +12,14 @@ offline nasazení na RHEL9 (podman). Úvod v [README.md](README.md), kontext v [
 
 ## Znalosti, které musíš znát dřív, než sáhneš na import
 
+Celkový přehled projektu (proč, prostředí, co běží, čeho se dosáhlo, konfigurace):
+[docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md).
 Podrobně: [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (kap. 9, postup importu) a
 [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md) (kap. 10, chyby a jejich diagnostický podpis).
 
+- **Původní stroj** `blue-ThinkCentre-M710s` (Ubuntu 24.04, `/opt/netbox-docker`, `/opt/commatrix`) běží
+  i MISP majitele stroje. Z jeho dat se nic nemaže.
+- **IP Fabric:** demo `guided-demo.eu.ipfabric.io` je 7.9.4, ve firmě (SŽ) 7.5.
 - **Pořadí importu je závazné:** `push_ipf_data.py` → ingestion (job ve `netbox-worker`) →
   `primarni_ip.py` → `prefixy.py`.
 - **Transformační mapy jsou jen v databázi** (`IPFabricTransformMap`), doslovně jsou v kap. 9.6.
@@ -30,6 +35,8 @@ Podrobně: [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (kap. 9, postup import
 - **`ipf.env` nikdy nenačítej shellem** (`$` a `*` v hesle), skripty ho parsují samy (`nacti_env`).
 - **Prefixy:** `ipaddress.ip_network(hodnota, strict=False)`.
 - **Konfigurace NetBoxu** se mění novou `ConfigRevision` odvozenou z poslední, nikdy z prázdného slovníku.
+  Aktuálně `ENFORCE_GLOBAL_UNIQUE = False`, `CHANGELOG_RETENTION = 0`, `JOB_RETENTION = 0` (nic se nemaže,
+  databáze jen roste, asi 2000 změn na import).
 - **NetBox Scripty:** soubor musí být v `netbox` i `netbox-worker` a patřit uid 999; vlastní metody
   nepojmenovávej tak, aby překryly metody `Script` (např. `_log`).
 - **Kontrola matice:** jako zdroj ber IP switche, ne firewallu. „hopu 1/2“ + `FORWARDING(1)` ve
@@ -52,6 +59,9 @@ souboru, žijí jen v databázi NetBoxu. Text map v kap. 9.6 je dokumentace, ne 
   Neukazovat kolegům jako skutečné nálezy.
 - **`fw_prehled_script.py`** nebyl nikdy spuštěn z nástěnky od začátku do konce. Je zaregistrovaný
   a proklik funguje, ale celý běh ověřený není.
+- Nálezy matice se neukládají jako Journal Entries, takže je nelze vypsat widgetem na nástěnce.
+- Neimportují se tabulky sousedů a linků (bez nich nelze kreslit topologii).
+- Nenamapovaný endpoint `managed-networks`: neimportovaných 104 hostů a 120 hraničních rozhraní.
 
 ## Co do repa nesmí
 

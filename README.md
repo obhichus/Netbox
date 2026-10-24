@@ -16,6 +16,7 @@ Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/
 |---|---|
 | [docs/INSTALACE-RHEL9.md](docs/INSTALACE-RHEL9.md) | kuchařka instalace: co nainstalovat, co kam zkopírovat, co spustit pod rootem |
 | [docs/PROJEKT.md](docs/PROJEKT.md) | o čem projekt je, proč a co má přinést |
+| [docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md) | souhrn projektu: proč, prostředí, co se řešilo, čeho se dosáhlo, co zbývá |
 | [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) | postup importu z IP Fabricu krok za krokem, transformační mapy, kontrola po importu |
 | [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md) | známé pasti importu a skriptů a podle čeho je poznat |
 | [CLAUDE.md](CLAUDE.md) | souhrn klíčových pravidel pro Clauda a další, kdo v repu pracují |
