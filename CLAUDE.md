@@ -37,6 +37,27 @@ Podrobně: [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (kap. 9, postup import
 - **Srovnání s IP Fabricem:** srovnávej zařízení (365), rozhraní (4618), lokality (21). Aktivní rozhraní
   (2608 vs. 2738) nesrovnávej, měří jinou věc.
 
+## Konfigurace, která je jen v databázi
+
+Transformační mapy, registrace NetBox Scriptů, rozložení nástěnek a konfigurační revize nejsou v žádném
+souboru, žijí jen v databázi NetBoxu. Text map v kap. 9.6 je dokumentace, ne záloha. Zálohu dělá
+[commatrix/export_konfigurace.py](commatrix/export_konfigurace.py) a výsledné JSONy patří do
+[export-konfigurace/](export-konfigurace/). Dokud tam nejsou, obnova od nuly není úplná.
+
+## Nedodělané – nepovažuj za hotové
+
+- **`commatrix/matice-demo2.csv`** má pořád dva slabé zdroje, které umírají na hopu 1
+  (Romanovými slovy: `10.52.103.101` → `10.52.98.1` a řádek „NTP z L77“ → `10.48.139.136`).
+  Dokud se ty záměny neudělají a kontrola se nespustí znovu, CSV generuje falešné nálezy (past 10.9).
+  Neukazovat kolegům jako skutečné nálezy.
+- **`fw_prehled_script.py`** nebyl nikdy spuštěn z nástěnky od začátku do konce. Je zaregistrovaný
+  a proklik funguje, ale celý běh ověřený není.
+
+## Co do repa nesmí
+
+`ipf.env`, celé `/opt/netbox-docker/env/`, generované `fw_prehled.csv` a `fw_siroka_pravidla.csv`
+(jsou v `.gitignore`). Hesla, tokeny a adresy strojů obecně.
+
 ## Co nikomu neslibovat (kap. 10.14)
 
 NetBox Community nemá mapu topologie (obrázky jsou z IP Fabricu) ani model firewallových pravidel.

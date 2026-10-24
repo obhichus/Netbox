@@ -25,6 +25,7 @@ Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/
 | [docs/provoz-netboxu-s-ipfabric.html](docs/provoz-netboxu-s-ipfabric.html) | provozní dokumentace (IP Fabric → NetBox, snímky, matice) |
 | [docs/komunikacni-matice-runbook.html](docs/komunikacni-matice-runbook.html) | runbook ukázky pro kolegy, nálezy, otázky a odpovědi |
 | [commatrix/](commatrix/) | skripty kontroly matice, import z IP Fabricu, matice CSV |
+| [export-konfigurace/](export-konfigurace/) | záloha konfigurace, která je jen v databázi (mapy, skripty, nástěnky, revize) |
 | [build/](build/) | stavba offline balíčku (na stroji s internetem) |
 | [deploy/](deploy/) | instalace, záloha, obnova na RHEL9 |
 | [migrate/](migrate/) | přenos dat ze stávajícího Ubuntu stroje (docker compose) |
@@ -183,6 +184,24 @@ Ekvivalenty příkazů z původní dokumentace (`docker compose …` v `/opt/net
 | `docker compose cp X netbox:/opt/netbox/netbox/scripts/` (do netbox i worker) | `deploy/install-commatrix.sh` (svazek je společný) |
 | `docker compose restart netbox netbox-worker` | `systemctl restart netbox netbox-worker` |
 | `docker compose ps` | `podman ps` |
+
+## Import z IP Fabricu: pořadí skriptů
+
+Pořadí je závazné, každý krok pracuje s výsledkem předchozího. Podrobně v
+[docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md), chyby a jejich podpis v [docs/ZNAME-PASTI.md](docs/ZNAME-PASTI.md).
+
+| | Krok | Co dělá |
+|---|---|---|
+| 1 | `commatrix/push_ipf_data.py` | stáhne tabulky z IP Fabric API (nebo z dumpu) do pluginu jako `IPFabricData`, dopočítá `nb_serial`/`nb_name` |
+| 2 | ingestion (IP Fabric → Sources → Sync) | plugin z dat založí objekty NetBoxu ve větvi; merge přes `enqueue_merge_job` nebo `auto_merge` |
+| 3 | `commatrix/primarni_ip.py` | doplní `primary_ip4` zařízení |
+| 4 | `commatrix/prefixy.py` | založí prefixy ze sloupce `net` |
+| 5 | kontrola po importu | počty proti dashboardu IP Fabricu (kap. 9.7) |
+
+Pak kontrola matice (`commatrix_script.py` / `commatrix_check.py`) a přehled firewallů
+(`fw_discover.py` → `fw_prehled.py`, `fw_na_matici.py`), viz [commatrix/README.md](commatrix/README.md).
+Po změně map, skriptů nebo nastavení spustit `commatrix/export_konfigurace.py` a JSONy commitnout
+do [export-konfigurace/](export-konfigurace/).
 
 ## Offline a IP Fabric
 

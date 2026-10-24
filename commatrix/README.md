@@ -17,7 +17,7 @@ Sprava - telnet na L35 je zakazan,10.39.255.1,10.35.255.194,tcp,23,deny
 | Soubor | Pro |
 |---|---|
 | `matice-demo.csv` | první demo snímek `8dc4dd8b-afc0-46ae-995c-38800e1df781` (36 řádků) |
-| `matice-demo2.csv` | druhý demo snímek `22443e66-2430-4a55-b953-d7601b3f5148` (40 řádků) |
+| `matice-demo2.csv` | druhý demo snímek `22443e66-2430-4a55-b953-d7601b3f5148` (40 řádků). **Nedodělané:** dva slabé zdroje umírají na hopu 1 a dávají falešné nálezy, viz [CLAUDE.md](../CLAUDE.md) |
 | `matrix-vzor.csv` | vzor formátu |
 
 Matice je vázaná na snímek: adresy v ní musí v kontrolovaném snímku existovat.
@@ -34,7 +34,7 @@ Nahrává a registruje je `deploy/install-commatrix.sh` (spustit po každé změ
 |---|---|
 | `commatrix_v2.py` | **Kontrola komunikační matice — v2**: verdikty s odkazy na zařízení, souhrn podle závažnosti, CSV výstup. Pole `cesta` = soubor v kontejneru, např. `/opt/netbox/netbox/scripts/matice-demo2.csv` |
 | `commatrix_script.py` | první verze kontroly (bez odkazů na zařízení) |
-| `fw_prehled_script.py` | **Přehled firewallových pravidel**: široká povolení k revizi, přehled po prvcích |
+| `fw_prehled_script.py` | **Přehled firewallových pravidel**: široká povolení k revizi, přehled po prvcích. Celý běh z nástěnky zatím neověřen |
 
 Čtou `IPF_URL`, `IPF_USER`, `IPF_PASS`, `IPF_SNAPSHOT` z `/opt/netbox-offline/env/netbox.env`.
 
@@ -47,6 +47,7 @@ Spouští se přes `deploy/nb-shell.sh` (náhrada `docker compose exec -T netbox
 | `push_ipf_data.py` | stáhne 11 tabulek snímku z IP Fabric API a vloží je do pluginu (zdroj v režimu *remote*); pak se spustí ingesce |
 | `primarni_ip.py` | nastaví zařízením primární IP |
 | `prefixy.py` | založí prefixy z naimportovaných adres |
+| `export_konfigurace.py` | export konfigurace, která je jen v databázi (mapy, skripty, nástěnky, revize) do JSON, viz [export-konfigurace/](../export-konfigurace/) |
 
 ```bash
 # import snímku z IP Fabricu

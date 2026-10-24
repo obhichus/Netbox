@@ -13,6 +13,12 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
   `IPAddressPrimaryRemovalError`, sync visící v Ready to merge, timeout RQ, IPv6 prefixy, falešná
   porušení matice, NetBox Scripty, `ConfigRevision`, heslo v `ipf.env`, co NetBox neumí). Stav: vyřešeno.
 - Nový [CLAUDE.md](CLAUDE.md) se souhrnem pravidel, odkazy v README.
+- `commatrix/export_konfigurace.py` (od Romana): export konfigurace, která je jen v databázi (mapy,
+  skripty, nástěnky, revize) do JSON; adresář [export-konfigurace/](export-konfigurace/). Stav: otevřené,
+  JSONy zatím nejsou v repu.
+- `.gitignore`: `ipf.env`, `netbox-docker/env/`, `fw_prehled.csv`, `fw_siroka_pravidla.csv`.
+- README: pořadí skriptů importu. CLAUDE.md: dvě nedodělané věci (slabé zdroje v `matice-demo2.csv`,
+  neověřený celý běh `fw_prehled_script.py`). Stav: otevřené.
 
 ## 2026-10-12: jedna větev
 
