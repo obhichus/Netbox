@@ -26,7 +26,6 @@ Obraz NetBoxu s pluginy je v [Packages](https://github.com/obhichus/Netbox/pkgs/
 | [docs/provoz-netboxu-s-ipfabric.html](docs/provoz-netboxu-s-ipfabric.html) | provozní dokumentace (IP Fabric → NetBox, snímky, matice) |
 | [docs/komunikacni-matice-runbook.html](docs/komunikacni-matice-runbook.html) | runbook ukázky pro kolegy, nálezy, otázky a odpovědi |
 | [commatrix/](commatrix/) | skripty kontroly matice, import z IP Fabricu, matice CSV |
-| [export-konfigurace/](export-konfigurace/) | záloha konfigurace, která je jen v databázi (mapy, skripty, nástěnky, revize) |
 | [build/](build/) | stavba offline balíčku (na stroji s internetem) |
 | [deploy/](deploy/) | instalace, záloha, obnova na RHEL9 |
 | [migrate/](migrate/) | přenos dat ze stávajícího Ubuntu stroje (docker compose) |
@@ -202,7 +201,8 @@ Pořadí je závazné, každý krok pracuje s výsledkem předchozího. Podrobn�
 Pak kontrola matice (`commatrix_script.py` / `commatrix_check.py`) a přehled firewallů
 (`fw_discover.py` → `fw_prehled.py`, `fw_na_matici.py`), viz [commatrix/README.md](commatrix/README.md).
 Po změně map, skriptů nebo nastavení spustit `commatrix/export_konfigurace.py` a JSONy commitnout
-do [export-konfigurace/](export-konfigurace/).
+do `export-konfigurace/`. Na původním Ubuntu stroji to celé (zdrojáky, konfigurace, export, kontrola
+úniku hesel, commit) dělá `commatrix/zaloha_na_git.sh`, viz [commatrix/README.md](commatrix/README.md#záloha-do-gitu).
 
 ## Offline a IP Fabric
 

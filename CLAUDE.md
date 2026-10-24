@@ -49,7 +49,11 @@ Podrobně: [docs/IMPORT-RUTINA.md](docs/IMPORT-RUTINA.md) (kap. 9, postup import
 Transformační mapy, registrace NetBox Scriptů, rozložení nástěnek a konfigurační revize nejsou v žádném
 souboru, žijí jen v databázi NetBoxu. Text map v kap. 9.6 je dokumentace, ne záloha. Zálohu dělá
 [commatrix/export_konfigurace.py](commatrix/export_konfigurace.py) a výsledné JSONy patří do
-[export-konfigurace/](export-konfigurace/). Dokud tam nejsou, obnova od nuly není úplná.
+`export-konfigurace/` (adresář vznikne až exportem). Dokud tam nejsou, obnova od nuly není úplná.
+Na původním stroji zálohu do gitu (zdrojáky, konfigurace, export, kontrola úniku hesel) dělá
+[commatrix/zaloha_na_git.sh](commatrix/zaloha_na_git.sh). Pozor: commituje přímo do `main`, který je
+chráněný, takže push skončí odmítnutím, a kopíruje konfiguraci do `netbox-docker/` (v repu je jinak
+v `configuration/` a `reference/puvodni-netbox-docker/`).
 
 ## Nedodělané – nepovažuj za hotové
 

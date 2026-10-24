@@ -47,7 +47,7 @@ Spouští se přes `deploy/nb-shell.sh` (náhrada `docker compose exec -T netbox
 | `push_ipf_data.py` | stáhne 11 tabulek snímku z IP Fabric API a vloží je do pluginu (zdroj v režimu *remote*); pak se spustí ingesce |
 | `primarni_ip.py` | nastaví zařízením primární IP |
 | `prefixy.py` | založí prefixy z naimportovaných adres |
-| `export_konfigurace.py` | export konfigurace, která je jen v databázi (mapy, skripty, nástěnky, revize) do JSON, viz [export-konfigurace/](../export-konfigurace/) |
+| `export_konfigurace.py` | export konfigurace, která je jen v databázi (mapy, skripty, nástěnky, revize) do JSON (adresář `export-konfigurace/` v kořeni repa), viz [Záloha do gitu](#záloha-do-gitu) |
 
 ```bash
 # import snímku z IP Fabricu
@@ -102,3 +102,16 @@ Ve výpisu má být `Ctu ulozeny snapshot z …`. Pozor: kontrola matice (simula
 | `fw_prehled.py` | přehled kvality pravidel do CSV |
 
 `provoz-netbox-ipfabric.txt` je textová verze provozní dokumentace.
+
+## Záloha do gitu
+
+`zaloha_na_git.sh` (Romanův skript pro původní Ubuntu stroj) zkopíruje skripty a data z `/opt/commatrix`
+(`*.py *.csv *.txt *.md *.sh`, nikdy `ipf.env` ani `dump/`), vybrané soubory z `/opt/netbox-docker`
+(bez `env/`), spustí `export_konfigurace.py` a vyzvedne JSONy do `export-konfigurace/`. Před commitem
+zkontroluje, že se nepřidává tajný soubor ani hodnota hesla z `ipf.env` nebo heslo zapsané v kódu
+(výjimky do `.zaloha-povoleno`). Volby `--bez-push`, `--bez-exportu`, `--zprava "text"`.
+
+`export_konfigurace.py` exportuje konfiguraci, která je jen v databázi: transformační mapy pluginu,
+registrace NetBox Scriptů, nástěnky a aktivní konfigurační revizi. Záměrně vynechává `IPFabricSource`
+(přístupové údaje), provozní data pluginu a klíče revize s PASSWORD/SECRET/TOKEN/KEY/CREDENTIAL.
+Na RHEL9: `deploy/nb-shell.sh /opt/commatrix/export_konfigurace.py`.

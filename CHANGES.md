@@ -14,10 +14,12 @@ Hesla, tokeny a adresy strojů jsou záměrně vynechány.
   porušení matice, NetBox Scripty, `ConfigRevision`, heslo v `ipf.env`, co NetBox neumí). Stav: vyřešeno.
 - Nový [CLAUDE.md](CLAUDE.md) se souhrnem pravidel, odkazy v README.
 - `commatrix/export_konfigurace.py` (od Romana): export konfigurace, která je jen v databázi (mapy,
-  skripty, nástěnky, revize) do JSON; adresář [export-konfigurace/](export-konfigurace/). Stav: otevřené,
+  skripty, nástěnky, revize) do JSON; adresář `export-konfigurace/`. Stav: otevřené,
   JSONy zatím nejsou v repu.
 - [docs/NETBOX-IPFABRIC-SOUHRN.md](docs/NETBOX-IPFABRIC-SOUHRN.md): Romanův souhrn projektu. Nedodělky z jeho
   části 9 (Journal Entries, sousedé a linky, `managed-networks`) přeneseny do CLAUDE.md. Stav: otevřené.
+- `commatrix/zaloha_na_git.sh` (od Romana): záloha zdrojáků, konfigurace a exportu z původního stroje do gitu
+  s kontrolou úniku hesel. Stav: otevřené (pushuje přímo do chráněného `main`).
 - `.gitignore`: `ipf.env`, `netbox-docker/env/`, `fw_prehled.csv`, `fw_siroka_pravidla.csv`.
 - README: pořadí skriptů importu. CLAUDE.md: dvě nedodělané věci (slabé zdroje v `matice-demo2.csv`,
   neověřený celý běh `fw_prehled_script.py`). Stav: otevřené.
